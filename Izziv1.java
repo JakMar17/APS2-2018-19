@@ -1,3 +1,5 @@
+//63170196
+
 import java.util.*;
 
 public class Izziv1 {
@@ -11,14 +13,10 @@ public class Izziv1 {
         while (x <= 100000) {
             long ena = timeLinear(x); v1 += ena;
             long dva = timeBinary(x); v2 += dva;
-            //System.out.println(x + "|\t" + ena + "|\t" + dva);
             System.out.format("%6d|\t%7d|   %4d   |%n", x, ena, dva);
-            //System.out.println(ena);
             x += 1000; stevec++;
         }
-            //System.out.println(stevec);
-            //System.out.println(v1/100 + "|\t" + v2/100);
-            System.out.println(errorL + " " + errorB);
+            //System.out.println(errorL + " " + errorB);
     }
 
     private static long timeLinear (int n) {
