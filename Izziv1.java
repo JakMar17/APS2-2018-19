@@ -1,85 +1,65 @@
-//63170196
-
-import java.util.*;
-
 public class Izziv1 {
     public static void main(String [] args) {
-        long v1 = 0, v2 = 0;
-        int x = 1000, stevec = 0;
+        
+        System.out.printf("-------------------------------------%n");
+        System.out.printf("|-----------|-----------|-----------|%n");
+        System.out.printf("|     n     |  linearno |  binarno  |%n");
+        System.out.printf("|-----------|-----------|-----------|%n");
 
-        System.out.format("  n   |linearno|  binarno |%n");
-        System.out.format("------|--------|----------|%n");
-
-        while (x <= 100000) {
-            long ena = timeLinear(x); v1 += ena;
-            long dva = timeBinary(x); v2 += dva;
-            System.out.format("%6d|\t%7d|   %4d   |%n", x, ena, dva);
-            x += 1000; stevec++;
+        for (int i = 1000; i <= 100000; i += 1000) {
+            System.out.printf("|%10d |%10d |%10d |%n", i, lineraniCas(i), binarniCas(i));
         }
-            //System.out.println(errorL + " " + errorB);
+        System.out.printf("|-----------|-----------|-----------|%n");
+        System.out.printf("-------------------------------------%n");
     }
 
-    private static long timeLinear (int n) {
-        Random random = new Random();
-        int [] tabela = generirajTabelo(n);
-
-        long start = System.nanoTime();
-        for (int i = 0; i < 1000; i++) {
-            int r = random.nextInt(n + 1 -1) +1;
-            int xxx = findLinear(tabela, r);
-        }
-        return (System.nanoTime() - start)/1000;
-    }
-
-    private static long timeBinary (int n) {
-        int [] tabela = generirajTabelo(n);
-
-        long start = System.nanoTime();
-        for (int i = 0; i < 1000; i++) {
-            int r = (int) (Math.random() * (tabela.length-1 - i +1)) +i;
-            int xxx = findBinary(tabela, r);
-        }
-        return (System.nanoTime() - start)/1000;
-    }
-
-    private static int[] generirajTabelo (int n) {
+    private static int [] generiranje (int n) {
         int [] tabela = new int[n];
-        for (int i = 0; i < n; i++)
-            tabela[i] = i;
+        for (int i = 1; i < tabela.length+1; i++)
+            tabela[i-1] = i;
         return tabela;
     }
 
-    private static int errorL = 0;
-    private static int findLinear (int[] a, int v) {
-        for (int i = 0; i < a.length; i++)
-            if(a[i] == v)
+    private static int linearnoIskanje (int[] tabela, int v) {
+        for (int i = 0; i < tabela.length; i++)
+            if (tabela[i] == v)
                 return i;
-        errorL++;
         return -1;
     }
 
-    private static int errorB = 0;
-    private static int findBinary (int a[], int v) {
-        int spodnjaMeja = 0;
-        int zgornjaMeja = a.length-1;
+    private static int binarnoIskanje (int [] tabela, int spodnjaMeja, int zgornjaMeja, int v) {
+        int sredina = (zgornjaMeja-spodnjaMeja)/2 + spodnjaMeja;
 
-        for (int i = a.length/2;;) {
-            if (a[i] == v)
-                return i;
-            else if (spodnjaMeja == i || zgornjaMeja == i || zgornjaMeja == spodnjaMeja) {
-                errorB++;
-                return -1;
-            }
-            else if (a[i] > v) {
-                //gremo v prvo polovico
-                zgornjaMeja = i;
-                i = (i+spodnjaMeja)/2;
-            }
-            else if (a[i] < v) {
-                //gremo v drugo polovico
-                spodnjaMeja = i;
-                i = (i+zgornjaMeja)/2;
-            }
+        if (spodnjaMeja > zgornjaMeja)
+            return -1;
+        
+        if (tabela[sredina] == v)
+            return sredina;
+        else if (tabela[sredina] > v)
+            return binarnoIskanje(tabela, spodnjaMeja, sredina-1, v);
+        else if (tabela[sredina] < v)
+            return binarnoIskanje(tabela, sredina+1, zgornjaMeja, v);
+        else
+            return -1;
+    }
+
+    private static long lineraniCas (int n) {
+        int [] tabela = generiranje(n);
+        long zacetniCas = System.nanoTime();
+        for (int i = 0; i < 1000; i++) {
+            int nakljucno = (int) (Math.random() * n) +1;
+            linearnoIskanje(tabela, nakljucno);
         }
+        return ((System.nanoTime() - zacetniCas)/1000);
+    }
+
+    private static long binarniCas (int n) {
+        int [] tabela = generiranje(n);
+        long zacetniCas = System.nanoTime();
+        for (int i = 0; i < 1000; i++) {
+            int nakljucno = (int) (Math.random() * n) +1;
+            binarnoIskanje(tabela, 0, n-1, nakljucno);
+        }
+        return ((System.nanoTime() - zacetniCas)/1000);
     }
 }
