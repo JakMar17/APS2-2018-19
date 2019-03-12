@@ -1,12 +1,18 @@
 import java.util.Scanner;
 
 public class Izziv2 {
-    private static int [] tabela = {1,2,3,4,5,6,31,412,514,0};
+    private static int [] tabela = {5,7,2,4,9,1,7,6};
     public static void main(String [] args) {
-        //int [] tabela = generiranje();
+        //tabela = generiranje();
+        
+        for (int dolzinaKopice = tabela.length-1; dolzinaKopice > 0; dolzinaKopice--) {
+            pogrezni1(0, dolzinaKopice);
+            izpis(dolzinaKopice);
 
-        pogrezni1(0, tabela.length-1);
-        izpis();
+            int temp = tabela[dolzinaKopice];
+            tabela[dolzinaKopice] = tabela[0];
+            tabela[0] = temp;
+        }
 
     }
 
@@ -76,10 +82,10 @@ public class Izziv2 {
             return 2;
     }
 
-    private static void izpis () {
+    private static void izpis (int dolzinaKopice) {
         int nivo = 1, stevec = 1;
 
-        for (int i = 0; i < tabela.length; i++) {
+        for (int i = 0; i <= dolzinaKopice; i++) {
             if (stevec == 0) {
                 System.out.format("| ");
                 stevec = nivo *2;
