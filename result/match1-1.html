@@ -1,0 +1,171 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+ <TITLE>Izziv2.java</TITLE>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <script type="text/javascript">
+  <!--
+   function ZweiFrames(URL1,F1,URL2,F2)
+   {
+    parent.frames[F1].location.href=URL1;
+    parent.frames[F2].location.href=URL2;
+   }
+  //-->
+  </script>
+</HEAD>
+<BODY BGCOLOR="#ffffff" style="margin-left:25">
+<HR>
+<H3><CENTER>Izziv2.java</CENTER></H3><HR>
+<PRE>
+import java.util.Scanner;
+
+public class Izziv2 {
+    private static int [] tabela = {5,7,2,4,9,1,7,6};
+    public static void main(String [] args) {
+        tabela = generiranje();
+        
+        for (int dolzinaKopice = tabela.length-1; dolzinaKopice &gt;= 0; dolzinaKopice--) {
+            pogrezanje(0, dolzinaKopice);
+            izpisKopice(dolzinaKopice);
+            //izpisSortiranja(dolzinaKopice);
+
+            int temp = tabela[dolzinaKopice];
+            tabela[dolzinaKopice] = tabela[0];
+            tabela[0] = temp;
+        }
+
+    }
+
+    private static int [] generiranje () {
+        Scanner sc = new Scanner (System.in);
+        int n = sc.nextInt();
+        int [] tabela = new int [n];
+
+        for (int i = 0; i &lt; n; i++)
+            tabela[i] = sc.nextInt();
+    
+        return tabela;
+    }
+
+    private static void pogrezni1 (int i, int dolzinaKopice) {
+        int temp;
+        int leviSin = 2 *i +1;
+        int desniSin = 2 *i +2;
+
+        if (desniSin &lt;= dolzinaKopice)
+            pogrezni1(desniSin, dolzinaKopice);
+        if (leviSin &lt;= dolzinaKopice)
+            pogrezni1(leviSin, dolzinaKopice);
+        else return;
+
+        if (desniSin &gt; dolzinaKopice) {
+            if (tabela[leviSin] &gt; tabela[i]) {
+                temp = tabela[i];
+                tabela[i] = tabela[leviSin];
+                tabela[leviSin] = temp;
+                pogrezni1(leviSin, dolzinaKopice);
+            }
+        }
+        else {
+            int maks = max(tabela, i, leviSin, desniSin);
+
+            switch (maks) {
+                case 0:
+                    break;
+                case 1:
+                    //zamenjamo levega in koren
+                    temp = tabela[i];
+                    tabela[i] = tabela[leviSin];
+                    tabela[leviSin] = temp;
+                    pogrezni1(leviSin, dolzinaKopice);
+                    break;
+                case 2:
+                    //zamenjamo desnega in koren
+                    temp = tabela[i];
+                    tabela[i] = tabela[desniSin];
+                    tabela[desniSin] = temp;
+<A NAME="0"></A>                    pogrezni1(desniSin, dolzinaKopice);
+            }
+        }
+<FONT color="#0000ff"><div style="position:absolute;left:0"><A HREF="javascript:ZweiFrames('match1-0.html#0',2,'match1-top.html#0',1)"><IMG SRC="back.gif" ALT="other" BORDER="0" ALIGN="left"></A></div><B>    }
+
+    private static void pogrezanje (int koren, int dolzinaKopice) {
+        int leviSin = 2* koren +1;
+        int desniSin = 2* koren +2;
+        int temp = -1;</B></FONT>
+
+        if (leviSin &lt;= dolzinaKopice)
+            pogrezanje(leviSin, dolzinaKopice);
+        else return;
+    
+        if (desniSin &lt;= dolzinaKopice)
+            pogrezanje(desniSin, dolzinaKopice);
+        
+        if (desniSin &gt; dolzinaKopice) {
+            if (tabela[leviSin] &gt; tabela[koren]) {
+                //zamenjamo levi sin &amp; koren
+                temp = tabela[leviSin];
+                tabela[leviSin] = tabela[koren];
+                tabela[koren] = temp;
+                pogrezanje(leviSin, dolzinaKopice);
+            }
+        } else {
+            int maks = max(tabela, koren, leviSin, desniSin);
+
+            if (maks == 0)
+                return;
+            else if (maks == 1) {
+                //zamenjamo koren &amp; levi sin
+                temp = tabela[leviSin];
+                tabela[leviSin] = tabela[koren];
+                tabela[koren] = temp;
+                pogrezanje(leviSin, dolzinaKopice);
+            }
+            else if (maks == 2) {
+                //zamenjamo koren &amp; desni sin
+                temp = tabela[desniSin];
+                tabela[desniSin] = tabela[koren];
+                tabela[koren] = temp;
+                pogrezanje(desniSin, dolzinaKopice);
+            }
+        }
+    }
+
+    private static int max (int [] tabela, int koren, int leviSin, int desniSin) {
+        koren = tabela[koren];
+        leviSin = tabela[leviSin];
+        desniSin = tabela[desniSin];
+
+        if (koren &gt; leviSin &amp;&amp; koren &gt; desniSin)
+            return 0;
+        else if (leviSin &gt;= desniSin)
+            return 1;
+        else
+            return 2;
+    }
+
+    private static void izpisKopice (int dolzinaKopice) {
+        int nivo = 1, stevec = 1;
+
+        for (int i = 0; i &lt;= dolzinaKopice; i++) {
+            if (stevec == 0) {
+                System.out.format(&quot;| &quot;);
+                stevec = (int) Math.pow(2, nivo);
+                nivo++;
+            }
+            System.out.format(&quot;%d &quot;, tabela[i]);
+<A NAME="1"></A>            stevec--;
+        }
+
+<FONT color="#f63526"><div style="position:absolute;left:0"><A HREF="javascript:ZweiFrames('match1-0.html#1',2,'match1-top.html#1',1)"><IMG SRC="back.gif" ALT="other" BORDER="0" ALIGN="left"></A></div><B>        System.out.format(&quot;%n&quot;);
+    }
+
+    private static void izpisSortiranja (int dolzinaKopice) {
+        for (int i = dolzinaKopice+1; i &lt; tabela.length; i++)
+            System.out.format(&quot;%d &quot;, tabela[i]);</B></FONT>
+        System.out.println();
+    }
+}
+</PRE>
+</BODY>
+</HTML>
