@@ -1,55 +1,42 @@
 import java.util.Scanner;
 
 public class Izziv4 {
-    private static int [] tabela;
-    private static int [] stBitov;
-    private static int [] count;
-
-    private static int [] urejena;
-
+    
     public static void main(String [] args) {
-        inic();
-        countingSort();
-        izpis();
-    }
-
-    private static void inic () {
-        Scanner sc = new Scanner(System.in);
+        Scanner sc = new Scanner (System.in);
         int dolzina = sc.nextInt();
-
-        tabela = new int [dolzina];
-        stBitov = new int [dolzina];
-
-        for (int i = 0; i < dolzina; i++) {
-            tabela[i] = sc.nextInt();
-            stBitov[i] = Integer.bitCount(stBitov[i]);
-        }
-    }
-
-    private static void countingSort() {
-        count = new int [tabela.length];
+        int tabela [] = new int [dolzina];
 
         for (int i = 0; i < tabela.length; i++)
-            count[stBitov[i]]++;
+            tabela[i] = sc.nextInt();   
 
-        for (int i = 1; i < count.length; i++)
-            count[i] += count[i-1];
-        
-        urejena = new int [tabela.length];
-        for (int i = tabela.length-1; i >= 0; i--) {
-            int element = tabela[i];
-            int bitov = stBitov[i];
-            int pozicija = count[bitov]-1;
+        int [] urejena = uredi(tabela, dolzina);
 
-            System.out.format("(%d,%d)%n", element, pozicija);
-            urejena[pozicija] = element;
-            count[bitov]--;
-        }
+        for (int i = 0; i < dolzina; i++)
+            System.out.print(urejena[i] + " ");
     }
 
+    private static int [] uredi (int [] tabela, int dolzina) {
+        int [] urejena = new int [dolzina];
+        int [] biti = new int [32];
+        int [] vrsta = new int [32];
 
-    private static void izpis() {
-        for (int i = 0; i < urejena.length; i++)
-            System.out.format("%d ", urejena[i]);
+        for (int i = 0; i < tabela.length; i++) 
+            biti[Integer.bitCount(tabela[i])]++;
+
+        for (int i = 0; i < dolzina; i++) {
+            if (i == 0) {
+                vrsta[i] = biti[i];
+                continue;
+            }
+            vrsta [i] = biti[i] + vrsta [i-1];
+        }
+
+        for (int i = dolzina-1; i > -1; i--) {
+            System.out.format("(%d,%d)%n", tabela[i], vrsta[Integer.bitCount(tabela[i])]-1);
+            urejena [vrsta[Integer.bitCount(tabela[i])]-1] = tabela[i];
+            vrsta [Integer.bitCount(tabela[i])]--;
+        }
+        return urejena;
     }
 }
