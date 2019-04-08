@@ -19,6 +19,9 @@ public class Naloga1 {
             case "bs":
                 BubbleSort bs = new BubbleSort(delovanje, smer, velikostTabele);
                 break;
+            case "ss":
+                SelectionSort ss = new SelectionSort(delovanje, smer, velikostTabele);
+                break;
         }
 
     }
@@ -128,5 +131,28 @@ class BubbleSort extends Naloga1 {
                 }
             }
         }
+    }
+}
+
+class SelectionSort extends Naloga1 {
+    private String delovanje;
+    private String smer;
+    private int velikostTabele;
+    private int[] tabela;
+    private int stPrimerjav = 0;
+    private int stPrirejanj = 0;
+
+    public SelectionSort (String delovanje, String smer, int velikostTabele) {
+        this.delovanje = delovanje;
+        this.smer = smer;
+        this.velikostTabele = velikostTabele;
+
+        paZacnimo();
+    }
+
+    private void paZacnimo() {
+        this.tabela = super.beriTabelo(velikostTabele);
+
+        
     }
 }
