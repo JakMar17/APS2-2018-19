@@ -46,6 +46,8 @@ public class Naloga1 {
                 System.out.print("| ");
             System.out.format("%d ", tabela[i]);
         }
+        if (meja == tabela.length)
+            System.out.print("| ");
         System.out.println();
     }
 
@@ -150,9 +152,119 @@ class SelectionSort extends Naloga1 {
         paZacnimo();
     }
 
+    /*private void paZacnimo() {
+        this.tabela = super.beriTabelo(velikostTabele);
+
+        //izpis(0);
+        for (int i = 0; i < velikostTabele; i++) {
+            int temp = tabela[i];
+            int j = i-1;
+            for (; j >= 0 && tabela[j] > temp; j--) {
+                tabela[j+1] = tabela[j];
+            }
+            tabela[j+1] = temp;
+            izpis(i+1);
+        }
+        
+    }*/
+
+    private void zamenjajSmer() {
+        if(smer.equals("up"))
+            smer = "down";
+        else
+            smer = "up";
+    }
+
     private void paZacnimo() {
         this.tabela = super.beriTabelo(velikostTabele);
 
-        
+        urejanje();
+        if(delovanje.equals("count")) {
+            izpis(0, true);
+            urejanje();
+            izpis(0, true);
+            zamenjajSmer();
+            urejanje();
+            izpis(0,true);
+        }
+    }
+
+    private void urejanje () {
+        for (int i = 0; i < velikostTabele; i++) {
+            iteracija(i);
+        }
+    }
+
+    private void iteracija (int meja) {
+        izpis(meja, false);
+        int indeks;
+        if (smer.equals("up"))
+            indeks = najdiMinimum(meja);
+        else
+            indeks = najdiMaksimum(meja);
+
+        stPrimerjav += velikostTabele - meja;
+        int temp = tabela[indeks];
+
+        tabela[indeks] = tabela[meja];
+        tabela[meja]  = temp;
+        stPrirejanj += 3;
+    }
+
+    private int najdiMinimum(int meja) {
+        int min = Integer.MAX_VALUE;
+        int indeks = 0;
+        for (int i = meja; i < velikostTabele; i++) {
+            if (tabela[i] < min) {
+                min = tabela[i];
+                indeks = i;
+            }
+        }
+        return indeks;
+    }
+
+    private int najdiMaksimum (int meja) {
+        int max = Integer.MIN_VALUE;
+        int indeks = 0;
+        for (int i = meja; i < velikostTabele; i++)
+            if (tabela[i] > max) {
+                max = tabela[i];
+                indeks = i;
+            }
+        return indeks;
+    }
+
+    private void izpis(int meja, boolean koncan) {
+        if (delovanje.equals("trace") && !koncan)
+            super.izpisTabela(tabela, meja);
+        else if (delovanje.equals("count") && koncan) {
+            System.out.format("%d %d%n", stPrimerjav, stPrirejanj);
+            stPrimerjav = 0;
+            stPrirejanj = 0;
+        }
     }
 }
+
+
+/*private void iteracijaGor (int meja) {
+        if(meja!=0)
+            izpis(meja);
+        int min = najdiMinimum(meja);
+        int temp = tabela[min];
+        for (int j  = min; j > meja; j--) {
+            tabela[j] = tabela[j-1];
+        }
+        tabela[meja] = temp;
+    }
+
+    private void iteracijaDol (int meja) {
+        if(meja!=0)
+            izpis(meja);
+        int max = najdiMaksimum(meja);
+        int temp = tabela[max];
+        for (int j = max; j > meja; j--) {
+            tabela[j] = tabela[j-1];
+        }
+        tabela[meja] = temp;
+    }
+*/
