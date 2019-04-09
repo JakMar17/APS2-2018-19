@@ -141,8 +141,8 @@ class SelectionSort extends Naloga1 {
     private String smer;
     private int velikostTabele;
     private int[] tabela;
-    private int stPrimerjav = 0;
-    private int stPrirejanj = 0;
+    private static int stPrimerjav = 0;
+    private static int stPrirejanj = 0;
 
     public SelectionSort (String delovanje, String smer, int velikostTabele) {
         this.delovanje = delovanje;
@@ -203,34 +203,41 @@ class SelectionSort extends Naloga1 {
         else
             indeks = najdiMaksimum(meja);
 
-        stPrimerjav += velikostTabele - meja;
+        //stPrimerjav += velikostTabele - meja;
         int temp = tabela[indeks];
 
-        tabela[indeks] = tabela[meja];
-        tabela[meja]  = temp;
-        stPrirejanj += 3;
+        if(tabela[meja] != temp) {
+            tabela[indeks] = tabela[meja];
+            tabela[meja]  = temp;
+            stPrirejanj += 3;
+        }
     }
 
     private int najdiMinimum(int meja) {
-        int min = Integer.MAX_VALUE;
-        int indeks = 0;
-        for (int i = meja; i < velikostTabele; i++) {
+        int min = tabela[meja];
+        int indeks = meja;
+        for (int i = meja+1; i < velikostTabele; i++) {
             if (tabela[i] < min) {
                 min = tabela[i];
                 indeks = i;
             }
+            stPrimerjav++;
         }
+        //stPrimerjav--;
         return indeks;
     }
 
     private int najdiMaksimum (int meja) {
-        int max = Integer.MIN_VALUE;
-        int indeks = 0;
-        for (int i = meja; i < velikostTabele; i++)
+        int max = tabela[meja];
+        int indeks = meja;
+        for (int i = meja+1; i < velikostTabele; i++) {
             if (tabela[i] > max) {
                 max = tabela[i];
                 indeks = i;
             }
+            stPrimerjav++;
+        }
+        //stPrimerjav--;
         return indeks;
     }
 
@@ -238,7 +245,7 @@ class SelectionSort extends Naloga1 {
         if (delovanje.equals("trace") && !koncan)
             super.izpisTabela(tabela, meja);
         else if (delovanje.equals("count") && koncan) {
-            System.out.format("%d %d%n", stPrimerjav, stPrirejanj);
+            System.out.format("%d %d%n", stPrimerjav, (velikostTabele - 1) * 3);
             stPrimerjav = 0;
             stPrirejanj = 0;
         }
