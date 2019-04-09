@@ -22,6 +22,9 @@ public class Naloga1 {
             case "ss":
                 SelectionSort ss = new SelectionSort(delovanje, smer, velikostTabele);
                 break;
+            case "is":
+                InsertionSort is = new InsertionSort(delovanje, smer, velikostTabele);
+                break;
         }
 
     }
@@ -152,22 +155,6 @@ class SelectionSort extends Naloga1 {
         paZacnimo();
     }
 
-    /*private void paZacnimo() {
-        this.tabela = super.beriTabelo(velikostTabele);
-
-        //izpis(0);
-        for (int i = 0; i < velikostTabele; i++) {
-            int temp = tabela[i];
-            int j = i-1;
-            for (; j >= 0 && tabela[j] > temp; j--) {
-                tabela[j+1] = tabela[j];
-            }
-            tabela[j+1] = temp;
-            izpis(i+1);
-        }
-        
-    }*/
-
     private void zamenjajSmer() {
         if(smer.equals("up"))
             smer = "down";
@@ -252,26 +239,93 @@ class SelectionSort extends Naloga1 {
     }
 }
 
+class InsertionSort extends Naloga1 {
+    private String delovanje;
+    private String smer;
+    private int velikostTabele;
+    private int [] tabela;
+    private int stPrimerjav = 0;
+    private int stPrirejanj = 0;
 
-/*private void iteracijaGor (int meja) {
-        if(meja!=0)
-            izpis(meja);
-        int min = najdiMinimum(meja);
-        int temp = tabela[min];
-        for (int j  = min; j > meja; j--) {
-            tabela[j] = tabela[j-1];
-        }
-        tabela[meja] = temp;
+    public InsertionSort (String delovanje, String smer, int velikostTabele) {
+        this.delovanje = delovanje;
+        this.smer = smer;
+        this.velikostTabele = velikostTabele;
+
+        paZacnimo();
+
     }
 
-    private void iteracijaDol (int meja) {
-        if(meja!=0)
-            izpis(meja);
-        int max = najdiMaksimum(meja);
-        int temp = tabela[max];
-        for (int j = max; j > meja; j--) {
-            tabela[j] = tabela[j-1];
-        }
-        tabela[meja] = temp;
+    private void zamenjajSmer() {
+        if (smer.equals("up"))
+            smer = "down";
+        else
+            smer = "up";
     }
-*/
+    
+    private void paZacnimo() {
+        this.tabela = super.beriTabelo(velikostTabele);
+        //izpis(0, false);
+        uredi();
+        
+        if(delovanje.equals("count")) {
+            izpis(0, true);
+            uredi();
+            izpis(0, true);
+            zamenjajSmer();
+            uredi();
+            izpis(0, true);
+        }
+    }
+
+    private void uredi() {
+        if (smer.equals("up"))
+            gor();
+        else
+            dol();
+    }
+
+    private void gor() {
+        for (int i = 0; i < velikostTabele; i++) {
+            int temp = tabela[i];
+            int j = i - 1;
+            stPrimerjav++;
+            boolean tukaj = false;
+            for (; j >= 0 && tabela[j] > temp; j--) {
+                stPrimerjav++;
+                tabela[j + 1] = tabela[j];
+                tukaj = true;
+            } if (tukaj) stPrimerjav--;
+            tukaj = false;
+            tabela[j + 1] = temp;
+            izpis(i + 1, false);
+        }
+    }
+
+    private void dol() {
+        for (int i = 0; i < velikostTabele; i++) {
+            int temp = tabela[i];
+            int j = i - 1;
+            for (; j >= 0 && tabela[j] < temp; j--) {
+                tabela[j + 1] = tabela[j];
+                stPrimerjav++;
+                stPrirejanj +=3;
+            }
+            //stPrimerjav++;
+            tabela[j + 1] = temp;
+            stPrirejanj +=3;
+            izpis(i + 1, false);
+        }
+    }
+    
+    private void izpis(int meja, boolean koncan) {
+        if (delovanje.equals("trace") && !koncan)
+            super.izpisTabela(tabela, meja);
+        else if (delovanje.equals("count") && koncan) {
+            System.out.format("%d %d%n", stPrimerjav, stPrirejanj);
+            stPrimerjav = 0;
+            stPrirejanj = 0;
+        }
+    }
+}
+
