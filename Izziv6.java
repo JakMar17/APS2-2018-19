@@ -9,7 +9,6 @@ public class Izziv6 {
     public static void main(String[] args) {
         beri();
         Strassen s = new Strassen(matrikaA, matrikaB, meja);
-        //matrikaC = s.getMatrikaC();
         matrikaC = s.getMatrikaC();
         izpis(matrikaC);
     }
@@ -17,10 +16,8 @@ public class Izziv6 {
     private static void beri() {
         dimenzijaMatrike = sc.nextInt();
         meja = sc.nextInt();
-        //System.out.println(meja);
         matrikaA = branjeMatrike();
         matrikaB = branjeMatrike();
-        //matrikaC = new int [dimenzijaMatrike][dimenzijaMatrike];
     }
 
     private static int[][] branjeMatrike() {
@@ -28,12 +25,10 @@ public class Izziv6 {
         for (int i = 0; i < dimenzijaMatrike; i++)
             for (int j = 0; j < dimenzijaMatrike; j++)
                 matrika[i][j] = sc.nextInt();
-        
         return matrika;
     }
 
     protected static void izpis (int [][] matrikaC) {
-        //System.out.println();
         for (int i  = 0; i < matrikaC.length; i++) {
             for (int j = 0; j < matrikaC.length; j++)
                 System.out.format("%d ", matrikaC[i][j]);
@@ -45,95 +40,66 @@ public class Izziv6 {
 
 class Strassen extends Matrike{
 
-    private int [][] matrikaA;
-    private int [][] matrikaB;
     private int [][] matrikaC;
     private int meja;
-    private int dimenzijeMatrike;
-    private int globina = 0;
-    private int [] mVrednosti = new int [7];
 
     public Strassen (int[][] matrikaA, int[][] matrikaB, int meja) {
-        super(matrikaA, matrikaB);
-        this.matrikaA = matrikaA;
-        this.matrikaB = matrikaB;
         this.meja = meja;
-        this.dimenzijeMatrike = dimenzijaMatrike;
-        matrikaC = mnozi(matrikaA, matrikaB);
+        matrikaC = mnozenjeStrassen(matrikaA, matrikaB);
     }
 
-    public int [][] mnozi (int [][] matrikaA, int [][] matrikaB) {
-        int dimenzija = matrikaA.length;
-        int[][] rezultat = new int [dimenzija][dimenzija];
+    public int [][] mnozenjeStrassen (int [][] matrikaA, int [][] matrikaB) {
 
-        if (dimenzija == 1) {
-            rezultat[0][0] = matrikaA[0][0] * matrikaB[0][0];
-            return rezultat;
-        } else if (dimenzija == meja)
+        int dimenzija = matrikaA.length;
+        if (dimenzija == meja)
             return super.mnozenjeMatrik(matrikaA, matrikaB);
 
-        //globina++;
-        
-        int [][] a11 = new int [dimenzija/2] [dimenzija/2];
-        a11 = razdeli(matrikaA, a11, 0, 0);
+        int [][] a11 = razdeliMatriko(matrikaA, 0, 0);
+        int [][] a12 = super.razdeliMatriko(matrikaA, 0, dimenzija/2);
+        int [][] a21 = super.razdeliMatriko(matrikaA, dimenzija/2, 0);
+        int [][] a22 = super.razdeliMatriko(matrikaA, dimenzija/2, dimenzija/2);
+        int [][] b11 = super.razdeliMatriko(matrikaB, 0, 0);
+        int [][] b12 = super.razdeliMatriko(matrikaB, 0, dimenzija/2);
+        int [][] b21 = super.razdeliMatriko(matrikaB, dimenzija/2, 0);
+        int [][] b22 = super.razdeliMatriko(matrikaB, dimenzija/2, dimenzija/2);
 
 
-        int [][] a12 = new int [dimenzija/2] [dimenzija/2];
-        a12 = razdeli(matrikaA, a12, 0, dimenzija/2);
+        int [][] temp1 = super.vsotaMatrik(a11, a22);
+        int [][] temp2 = super.vsotaMatrik(b11, b22);
+        int [][] m1 = mnozenjeStrassen ( temp1, temp2 );
+        
+        temp1 = super.vsotaMatrik(a21, a22);
+        int [][] m2 = mnozenjeStrassen ( temp1, b11 );
+        
+        temp2 = super.razlikaMatrik(b12, b22);
+        int [][] m3 = mnozenjeStrassen ( a11, temp2 );
+        
+        temp2 = super.razlikaMatrik(b21, b11);
+        int [][] m4 = mnozenjeStrassen ( a22, temp2 );
+        
+        temp1 = super.vsotaMatrik(a11, a12);
+        int [][] m5 = mnozenjeStrassen ( temp1, b22 );
+        
+        temp1 = super.razlikaMatrik(a21, a11);
+        temp2 = super.vsotaMatrik(b11, b12);
+        int [][] m6 = mnozenjeStrassen ( temp1, temp2 );
+        
+        temp1 = super.razlikaMatrik(a12, a22);
+        temp2 = super.vsotaMatrik(b21, b22);
+        int [][] m7 = mnozenjeStrassen ( temp1, temp2 );
+        
+        
+        temp1 = super.vsotaMatrik(m1, m4);
+        temp2 = super.razlikaMatrik(temp1, m5);
+        int [][] c11 = super.vsotaMatrik( temp2, m7 );
+        
+        int [][] c12 = super.vsotaMatrik( m3, m5 );
 
-        int [][] a21 = new int [dimenzija/2] [dimenzija/2];
-        a21 = razdeli(matrikaA, a21, dimenzija/2, 0);
-
-        int [][] a22 = new int [dimenzija/2] [dimenzija/2];
-        a22 = razdeli(matrikaA, a22, dimenzija/2, dimenzija/2);
-
-        int [][] b11 = new int [dimenzija/2] [dimenzija/2];
-        b11 = razdeli(matrikaB, b11, 0, 0);
-
-        int [][] b12 = new int [dimenzija/2] [dimenzija/2];
-        b12 = razdeli(matrikaB, b12, 0, dimenzija/2);
-
-        int [][] b21 = new int [dimenzija/2] [dimenzija/2];
-        b21 = razdeli(matrikaB, b21, dimenzija/2, 0);
-
-        int [][] b22 = new int [dimenzija/2] [dimenzija/2];
-        b22 = razdeli(matrikaB, b22, dimenzija/2, dimenzija/2);
-
-        int [][] temp1 = sestej(a11, a22);
-        int [][] temp2 = sestej(b11, b22);
-        int [][] m1 = mnozi ( temp1, temp2 );
+        int [][] c21 = super.vsotaMatrik( m2, m4 );
         
-        temp1 = sestej(a21, a22);
-        int [][] m2 = mnozi ( temp1, b11 );
-        
-        temp2 = odstej(b12, b22);
-        int [][] m3 = mnozi ( a11, temp2 );
-        
-        temp2 = odstej(b21, b11);
-        int [][] m4 = mnozi ( a22, temp2 );
-        
-        temp1 = sestej(a11, a12);
-        int [][] m5 = mnozi ( temp1, b22 );
-        
-        temp1 = odstej(a21, a11);
-        temp2 = sestej(b11, b12);
-        int [][] m6 = mnozi ( temp1, temp2 );
-        
-        temp1 = odstej(a12, a22);
-        temp2 = sestej(b21, b22);
-        int [][] m7 = mnozi ( temp1, temp2 );
-        
-        temp1 = sestej(m1, m4);
-        temp2 = odstej(temp1, m5);
-        int [][] c11 = sestej( temp2, m7 );
-        
-        int [][] c12 = sestej( m3, m5 );
-        
-        int [][] c21 = sestej( m2, m4 );
-        
-        temp1 = sestej(m1, m3);
-        temp2 = odstej(temp1, m2);
-        int [][] c22 = sestej( temp2, m6 );
+        temp1 = super.vsotaMatrik(m1, m3);
+        temp2 = super.razlikaMatrik(temp1, m2);
+        int [][] c22 = super.vsotaMatrik( temp2, m6 );
         
 
         vrednostM(m1, 1);
@@ -148,17 +114,16 @@ class Strassen extends Matrike{
     }
 
     private void vrednostM (int [][] m, int i) {
-        mVrednosti [i-1] = super.skalar(m);
-        System.out.format("m%d: %d%n", i, mVrednosti[i-1]);
+        System.out.format("m%d: %d%n", i, super.vsotaSkalar(m));
     }
 
     private int [][] zdruziVse (int [][] c11, int [][] c12, int [][] c21, int [][] c22, int dimenzija) {
         int [][] rezultat = new int [dimenzija][dimenzija];
 
-        rezultat = zdruzi(c11, rezultat, 0, 0);
-        rezultat = zdruzi(c12, rezultat, 0, dimenzija/2);
-        rezultat = zdruzi(c21, rezultat, dimenzija/2, 0);
-        rezultat = zdruzi(c22, rezultat, dimenzija/2, dimenzija/2);
+        rezultat = super.zdruziMatriko(c11, rezultat, 0, 0);
+        rezultat = super.zdruziMatriko(c12, rezultat, 0, dimenzija/2);
+        rezultat = super.zdruziMatriko(c21, rezultat, dimenzija/2, 0);
+        rezultat = super.zdruziMatriko(c22, rezultat, dimenzija/2, dimenzija/2);
 
         return rezultat;
     }
@@ -169,18 +134,7 @@ class Strassen extends Matrike{
 }
 
 class Matrike extends Izziv6 {
-    protected int[][] matrikaA;
-    protected int[][] matrikaB;
-    protected int[][] matrikaC;
-    protected int meja;
-
-    public Matrike (int[][] matrikaA, int[][] matrikaB) {
-        this.matrikaA = matrikaA;
-        this.matrikaB = matrikaB;
-        this.meja = super.meja;
-    }
-
-    protected int [][] sestej (int [][] matrikaA, int [][] matrikaB) {
+    protected int [][] vsotaMatrik (int [][] matrikaA, int [][] matrikaB) {
         int dimenzija = matrikaA.length;
         int [][] vsota = new int [dimenzija][dimenzija];
 
@@ -190,7 +144,7 @@ class Matrike extends Izziv6 {
         return vsota;
     }
 
-    protected int [][] odstej (int [][] matrikaA, int [][] matrikaB) {
+    protected int [][] razlikaMatrik (int [][] matrikaA, int [][] matrikaB) {
         int dimenzija = matrikaA.length;
         int[][] razlika = new int[dimenzija][dimenzija];
 
@@ -200,7 +154,9 @@ class Matrike extends Izziv6 {
         return razlika;
     }
 
-    protected int[][] razdeli (int[][] stars, int [][] otrok, int iMeja, int jMeja) {
+    protected int[][] razdeliMatriko (int[][] stars, int iMeja, int jMeja) {
+        int dimenzija = stars.length;
+        int [][] otrok = new int [dimenzija/2] [dimenzija/2];
         int ii = iMeja;
         for (int i = 0; i < otrok.length; i++) {
             int jj = jMeja;
@@ -213,7 +169,7 @@ class Matrike extends Izziv6 {
         return otrok;
     }
 
-    protected int[][] zdruzi (int[][] otrok, int [][] stars, int iMeja, int jMeja) {
+    protected int[][] zdruziMatriko (int[][] otrok, int [][] stars, int iMeja, int jMeja) {
         int ii = iMeja;
         for (int i = 0; i < otrok.length; i++) {
             int jj = jMeja;
@@ -227,7 +183,7 @@ class Matrike extends Izziv6 {
         return stars;
     }
 
-    protected int skalar (int[][] matrika) {
+    protected int vsotaSkalar (int[][] matrika) {
         int vsota = 0;
         for (int i = 0; i < matrika.length; i++)
             for (int j = 0; j < matrika.length; j++)
