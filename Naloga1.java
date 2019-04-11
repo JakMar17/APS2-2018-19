@@ -25,6 +25,9 @@ public class Naloga1 {
             case "is":
                 InsertionSort is = new InsertionSort(delovanje, smer, velikostTabele);
                 break;
+            case "hs":
+                HeapSort hp = new HeapSort(delovanje, smer, velikostTabele);
+                break;
         }
 
     }
@@ -325,5 +328,180 @@ class InsertionSort extends Naloga1 {
             stPrirejanj = 0;
         }
     }
+}
+
+class HeapSort extends Naloga1 {
+    private String delovanje;
+    private String smer;
+    private int velikostTabele;
+    private int[] tabela;
+    private int stPrimerjav = 0;
+    private int stPrirejanj = 0;
+
+    public HeapSort (String delovanje, String smer, int velikostTabele) {
+        this.delovanje = delovanje;
+        this.smer = smer;
+        this.velikostTabele = velikostTabele;
+
+        paZacnimo();
+    }
+
+    private void paZacnimo () {
+        this.tabela = super.beriTabelo(velikostTabele);
+
+        for (int dolzinaKopice = tabela.length-1; dolzinaKopice >= 0; dolzinaKopice--) {
+            if (smer.equals("up"))
+                pogrezanjeGor(0, dolzinaKopice);
+            else
+                pogrezanjeDol(0, dolzinaKopice);
+
+            if (delovanje.equals("trace"))
+                izpisTabela(dolzinaKopice);
+
+            int temp = tabela[dolzinaKopice];
+            tabela[dolzinaKopice] = tabela[0];
+            tabela[0] = temp;
+            //stPrirejanj += 3;
+        }
+
+
+        if (delovanje.equals("count"))
+            System.out.println(stPrirejanj);
+
+    }
+
+    private void pogrezanjeDol (int koren, int dolzinaKopice) {
+        int leviSin = 2* koren +1, desniSin = 2* koren +2;
+        int temp = -1;
+
+        if (leviSin <= dolzinaKopice)
+            pogrezanjeDol(leviSin, dolzinaKopice);
+        else
+            return;
+
+        if (desniSin <= dolzinaKopice)
+            pogrezanjeDol(desniSin, dolzinaKopice);
+
+        if (desniSin > dolzinaKopice) {
+            if (tabela[leviSin] < tabela[koren]) {
+                // zamenjamo levi sin & koren
+                temp = tabela[leviSin];
+                tabela[leviSin] = tabela[koren];
+                tabela[koren] = temp;
+                pogrezanjeDol(leviSin, dolzinaKopice);
+            }
+        } else {
+            int indeks;
+            if (smer.equals("up"))
+                indeks = max(tabela, koren, leviSin, desniSin);
+            else
+                indeks = min(tabela, koren, leviSin, desniSin);
+
+            if (indeks == 0)
+                return;
+            else if (indeks == 1) {
+                // zamenjamo koren & levi sin
+                temp = tabela[leviSin];
+                tabela[leviSin] = tabela[koren];
+                tabela[koren] = temp;
+                pogrezanjeDol(leviSin, dolzinaKopice);
+            } else if (indeks == 2) {
+                // zamenjamo koren & desni sin
+                temp = tabela[desniSin];
+                tabela[desniSin] = tabela[koren];
+                tabela[koren] = temp;
+                pogrezanjeDol(desniSin, dolzinaKopice);
+            }
+        }
+    }
+
+    private void pogrezanjeGor (int koren, int dolzinaKopice) {
+        int leviSin = 2 * koren + 1;
+        int desniSin = 2 * koren + 2;
+        int temp = -1;
+
+        if (leviSin <= dolzinaKopice)
+            pogrezanjeGor(leviSin, dolzinaKopice);
+        else
+            return;
+
+        if (desniSin <= dolzinaKopice)
+            pogrezanjeGor(desniSin, dolzinaKopice);
+
+        if (desniSin > dolzinaKopice) {
+            if (tabela[leviSin] > tabela[koren]) {
+                // zamenjamo levi sin & koren
+                temp = tabela[leviSin];
+                tabela[leviSin] = tabela[koren];
+                tabela[koren] = temp;
+                stPrirejanj += 3;
+                pogrezanjeGor(leviSin, dolzinaKopice);
+            }
+        } else {
+            int maks = max(tabela, koren, leviSin, desniSin);
+
+            if (maks == 0)
+                return;
+            else if (maks == 1) {
+                // zamenjamo koren & levi sin
+                temp = tabela[leviSin];
+                tabela[leviSin] = tabela[koren];
+                tabela[koren] = temp;
+                stPrirejanj += 3;
+                pogrezanjeGor(leviSin, dolzinaKopice);
+            } else if (maks == 2) {
+                // zamenjamo koren & desni sin
+                temp = tabela[desniSin];
+                tabela[desniSin] = tabela[koren];
+                tabela[koren] = temp;
+                stPrirejanj += 3;
+                pogrezanjeGor(desniSin, dolzinaKopice);
+            }
+        }
+    }
+    //@Override
+    protected void izpisTabela(int dolzinaKopice) {
+        int nivo = 1, stevec = 1;
+
+        for (int i = 0; i <= dolzinaKopice; i++) {
+            if (stevec == 0) {
+                System.out.format("| ");
+                stevec = (int) Math.pow(2, nivo);
+                nivo++;
+            }
+            System.out.format("%d ", tabela[i]);
+            stevec--;
+        }
+
+        System.out.format("%n");
+    }
+
+    private int max (int [] tabela, int koren, int leviSin, int desniSin) {
+        koren = tabela[koren];
+        leviSin = tabela[leviSin];
+        desniSin = tabela[desniSin];
+
+        if (koren > leviSin && koren > desniSin)
+            return 0;
+        else if (leviSin >= desniSin)
+            return 1;
+        else
+            return 2;
+    }
+
+    private int min (int [] tabela, int koren, int leviSin, int desniSin) {
+        koren = tabela[koren];
+        leviSin = tabela[leviSin];
+        desniSin = tabela[desniSin];
+
+        if(koren < leviSin && koren < desniSin)
+        return 0;
+        else if (desniSin >= leviSin)
+        return 1;
+        else
+        return 2;
+
+    }
+
 }
 
