@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class Izziv5 {
-
+    //maybe gloom, goldfish, overflow, patriot, snappy, vision, yule, 
     private static Scanner sc = new Scanner(System.in);
     private static int velikostSeznam;
 

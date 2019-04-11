@@ -286,17 +286,15 @@ class InsertionSort extends Naloga1 {
     }
 
     private void gor() {
-        for (int i = 0; i < velikostTabele; i++) {
+        for (int i = 1; i < velikostTabele; i++) {
             int temp = tabela[i];
             int j = i - 1;
-            stPrimerjav++;
             boolean tukaj = false;
             for (; j >= 0 && tabela[j] > temp; j--) {
                 stPrimerjav++;
                 tabela[j + 1] = tabela[j];
                 tukaj = true;
-            } if (tukaj) stPrimerjav--;
-            tukaj = false;
+            }
             tabela[j + 1] = temp;
             izpis(i + 1, false);
         }
