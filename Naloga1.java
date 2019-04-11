@@ -246,11 +246,11 @@ class InsertionSort extends Naloga1 {
     private String delovanje;
     private String smer;
     private int velikostTabele;
-    private int [] tabela;
+    private int[] tabela;
     private int stPrimerjav = 0;
     private int stPrirejanj = 0;
 
-    public InsertionSort (String delovanje, String smer, int velikostTabele) {
+    public InsertionSort(String delovanje, String smer, int velikostTabele) {
         this.delovanje = delovanje;
         this.smer = smer;
         this.velikostTabele = velikostTabele;
@@ -265,13 +265,13 @@ class InsertionSort extends Naloga1 {
         else
             smer = "up";
     }
-    
+
     private void paZacnimo() {
         this.tabela = super.beriTabelo(velikostTabele);
-        //izpis(0, false);
+        // izpis(0, false);
         uredi();
-        
-        if(delovanje.equals("count")) {
+
+        if (delovanje.equals("count")) {
             izpis(0, true);
             uredi();
             izpis(0, true);
@@ -289,15 +289,17 @@ class InsertionSort extends Naloga1 {
     }
 
     private void gor() {
-        for (int i = 1; i < velikostTabele; i++) {
+        for (int i = 0; i < velikostTabele; i++) {
             int temp = tabela[i];
             int j = i - 1;
+            stPrimerjav++;
             boolean tukaj = false;
             for (; j >= 0 && tabela[j] > temp; j--) {
                 stPrimerjav++;
                 tabela[j + 1] = tabela[j];
                 tukaj = true;
             }
+            tukaj = false;
             tabela[j + 1] = temp;
             izpis(i + 1, false);
         }
@@ -310,20 +312,20 @@ class InsertionSort extends Naloga1 {
             for (; j >= 0 && tabela[j] < temp; j--) {
                 tabela[j + 1] = tabela[j];
                 stPrimerjav++;
-                stPrirejanj +=3;
+                stPrirejanj += 3;
             }
-            //stPrimerjav++;
+            // stPrimerjav++;
             tabela[j + 1] = temp;
-            stPrirejanj +=3;
+            stPrirejanj += 3;
             izpis(i + 1, false);
         }
     }
-    
+
     private void izpis(int meja, boolean koncan) {
         if (delovanje.equals("trace") && !koncan)
             super.izpisTabela(tabela, meja);
         else if (delovanje.equals("count") && koncan) {
-            System.out.format("%d %d%n", stPrimerjav, stPrirejanj);
+            System.out.format("%d %d%n", stPrimerjav-1, stPrirejanj);
             stPrimerjav = 0;
             stPrirejanj = 0;
         }
