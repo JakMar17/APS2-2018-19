@@ -28,6 +28,12 @@ public class Naloga1 {
             case "hs":
                 HeapSort hp = new HeapSort(delovanje, smer, velikostTabele);
                 break;
+            case "qs":
+                QuickSort qs = new QuickSort(delovanje, smer, velikostTabele);
+                break;
+            case "ms":
+                MergeSort ms = new MergeSort(delovanje, smer, velikostTabele);
+                break;
         }
 
     }
@@ -55,6 +61,13 @@ public class Naloga1 {
         if (meja == tabela.length)
             System.out.print("| ");
         System.out.println();
+    }
+
+    protected static String zamenjajSmer (String s) {
+        if (s.equals("up"))
+            return "down";
+        else
+            return "up";
     }
 
 
@@ -505,5 +518,176 @@ class HeapSort extends Naloga1 {
 
     }
 
+}
+
+class MergeSort extends Naloga1 {
+    private String delovanje;
+    private String smer;
+    private int velikostTabele;
+    private int[] tabela;
+
+    private int stPrimerjav = 0;
+    private int stPrirejanj = 0;
+
+    public MergeSort (String delovanje, String smer, int velikostTabele) {
+        this.delovanje = delovanje;
+        this.smer = smer;
+        this.velikostTabele = velikostTabele;
+
+        paZacnimo();
+    }
+
+    private void paZacnimo() {
+        tabela = super.beriTabelo(velikostTabele);
+        int[] nova = new int[tabela.length];
+        razdeli(tabela, nova, 0, tabela.length-1);
+
+        if(delovanje.equals("count")) {
+            izpisStetja();
+            razdeli(tabela, nova, 0, tabela.length-1);
+            izpisStetja();
+            this.smer = super.zamenjajSmer(smer);
+            razdeli(tabela, nova, 0, tabela.length-1);
+            izpisStetja();
+        }
+    }
+
+    private void izpisStetja() {
+        System.out.format("%d %d%n", stPrimerjav, stPrirejanj);
+        stPrirejanj = 0;
+        stPrimerjav = 0;
+    }
+
+    private void razdeli (int[] t, int [] nova, int l, int d) {
+        if (l == d) {
+            stPrirejanj ++;
+            return;
+        }
+        int sredina = (l+d) /2;
+
+        izpisTabela(t, l, d, true);
+        
+        razdeli(t, nova, l, sredina);
+        razdeli(t, nova, sredina+1, d);
+        zdruzi(t, nova, l, d);
+    }
+
+    private void zdruzi (int[] t, int [] nova, int l, int d) {
+        int mejaL = (l+d)/2;
+        int mejaD = mejaL+1;
+        int indeksL = l;
+        int indeksD = mejaD;
+        int i = l;
+
+        if (smer.equals("up")) {
+            for (; indeksL <= mejaL && indeksD <= d; i++) {
+                if (t[indeksL] <= t[indeksD]) {
+                    nova[i] = t[indeksL];
+                    indeksL++;
+                } else {
+                    nova[i] = t[indeksD];
+                    indeksD++;
+                }
+                stPrimerjav++;
+                stPrirejanj ++;
+            }
+        } else if (smer.equals("down")) {
+            for (; indeksL <= mejaL && indeksD <= d; i++) {
+                if (t[indeksL] >= t[indeksD]) {
+                    nova[i] = t[indeksL];
+                    indeksL++;
+                } else {
+                    nova[i] = tabela[indeksD];
+                    indeksD++;
+                }
+                stPrimerjav++;
+                stPrirejanj ++;
+            }
+        }
+
+        if (indeksL <= mejaL) {
+            for (int j = indeksL; j <= mejaL; j++) {
+                nova[i] = t[indeksL];
+                indeksL++;
+                i++;
+                stPrirejanj ++;
+            }
+        }
+        if (indeksD <= d) {
+            for (int j = indeksD; j <= d; j++) {
+                nova[i] = t[indeksD];
+                indeksD++;
+                i++;
+                stPrirejanj ++;
+            }
+        }
+
+        izpisTabela(nova, l, i-1, false);
+
+        for (int j = l; j < i; j++)
+            t[j] = nova[j];
+    }
+
+    
+    private void izpisTabela (int [] t, int l, int d, boolean navpicnica) {
+        if(delovanje.equals("count"))
+            return;
+
+        //System.out.println("tukaj");
+        int sredina = (l+d)/2;
+        for (int i = l; i <= d; i++) {
+            System.out.format("%d ", t[i]);
+            if (i == sredina && navpicnica)
+                System.out.format("| ");
+        }
+        System.out.println();
+    }
+}
+
+class QuickSort extends Naloga1 {
+    private String delovanje;
+    private String smer;
+    private int velikostTabele;
+    private int [] tabela;
+
+    private int stPrimerjav = 0;
+    private int stPrirejanj = 0;
+
+    public QuickSort (String delovanje, String smer, int velikostTabele) {
+        this.delovanje = delovanje;
+        this.smer = smer;
+        this.velikostTabele = velikostTabele;
+
+        paZacnimo();
+    }
+
+    private void paZacnimo() {
+        tabela = super.beriTabelo(velikostTabele);
+        quickSort(0, tabela.length-1);
+        super.izpisTabela(tabela, tabela.length);
+    }
+
+    private void quickSort (int levi, int desni) {
+        int pivot = tabela[(levi+desni)/2];
+        int i = levi, j = desni;
+
+        while (i <= j) {
+            while (tabela[i] < pivot)
+                i ++;
+            while (tabela[j] > pivot)
+                j--;
+            if (i <= j) {
+                swap(i, j);
+                i++;
+                j--;
+            }
+        }
+    }
+
+    private void swap (int i, int j) {
+        int temp = tabela[i];
+        tabela[i] = tabela[j];
+        tabela[j] = temp;
+    }
 }
 
