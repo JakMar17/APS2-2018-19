@@ -36,6 +36,10 @@ public class Naloga1 {
                 break;
             case "cs":
                 CountingSort cs = new CountingSort(delovanje, smer, velikostTabele);
+                cs.paZacnimo();
+                break;
+            case "rs":
+                RadixSort rs = new RadixSort(delovanje, smer, velikostTabele);
                 break;
         }
 
@@ -698,7 +702,7 @@ class CountingSort extends Naloga1 {
     private String delovanje;
     private String smer;
     private int velikostTabele;
-    private int [] tabela;
+    protected int [] tabela;
     private int stPrimerjav = 0;
     private int stPrirejanj = 0;
     private int [] komulativa = new int [256];
@@ -707,12 +711,14 @@ class CountingSort extends Naloga1 {
         this.delovanje = delovanje;
         this.smer = smer;
         this.velikostTabele = velikostTabele;
-
-        paZacnimo();
+        tabela = super.beriTabelo(velikostTabele);
+        //paZacnimo();
     }
 
-    private void paZacnimo() {
-        tabela = super.beriTabelo(velikostTabele);
+    public CountingSort() {}
+
+    protected void paZacnimo() {
+//        tabela = super.beriTabelo(velikostTabele);
         izracunajKomulativo();
 
         izpisTabela(komulativa, -1);
@@ -725,6 +731,7 @@ class CountingSort extends Naloga1 {
             izpisElement(komulativa[temp]+"", false);
             nova[komulativa[temp]] = temp;
         }
+        tabela = nova;
         izpisElement("", true);
         izpisTabela(nova, -1);
 
@@ -736,14 +743,14 @@ class CountingSort extends Naloga1 {
             super.izpisTabela(t, meja);
     }
 
-    private void izpisElement(String el, boolean novaVrstica) {
+    protected void izpisElement(String el, boolean novaVrstica) {
         if(delovanje.equals("trace"))
             System.out.format("%s ", el);
         if(novaVrstica)
             System.out.println();
     }
 
-    private void izracunajKomulativo() {
+    protected void izracunajKomulativo() {
         for (int i = 0; i < velikostTabele; i++)
             komulativa[tabela[i]] ++;
         for (int i = 0; i < komulativa.length; i++) {
@@ -752,5 +759,69 @@ class CountingSort extends Naloga1 {
             else
                 komulativa[i] += komulativa[i-1];
         }
+    }
+}
+
+class RadixSort extends Naloga1 {
+    private String delovanje;
+    private String smer;
+    private int velikostTabele;
+    private int [] tabela;
+    private int[] komulativa = new int[256];
+
+    //private CountingSort cs;
+    private int stPrimerjav = 0;
+    private int stPrirejanj = 0;
+
+    public RadixSort (String delovanje, String smer, int velikostTabele) {
+        //super();
+        this.delovanje = delovanje;
+        this.smer = smer;
+        this.velikostTabele = velikostTabele;
+
+        paZacnimo();
+    }
+
+    
+    protected void paZacnimo() {
+        tabela = super.beriTabelo(velikostTabele);
+        tabela = metoda(tabela, 0);
+        tabela = metoda(tabela, 8);
+        tabela = metoda(tabela, 16);
+        tabela = metoda(tabela, 24);
+    }
+
+    private int [] metoda (int [] tabela, int zamik) {
+        int[] komulativa = new int[256];
+
+        for (int i = 0; i < velikostTabele; i++)
+            komulativa[ ( (int) ((tabela[i] >>> zamik) & 0xFF))]++;
+
+        for (int i = 1; i < komulativa.length; i++)
+            komulativa[i] += komulativa[i-1];
+
+        super.izpisTabela(komulativa, -1);
+
+        int[] nova = new int[tabela.length];
+        for (int i = tabela.length - 1; i >= 0; i--) {
+            int st = ((tabela[i] >>> zamik) & 0xFF);
+            komulativa[st]--;
+            izpisElement(komulativa[st] + "", false);
+            nova[komulativa[st]] = tabela[i];
+        }
+        izpisElement("", true);
+
+        tabela = nova;
+
+        super.izpisTabela(tabela, -1);
+
+        return nova;
+    }
+
+    protected void izpisElement(String el, boolean novaVrstica) {
+        if (delovanje.equals("trace"))
+            System.out.format("%s ", el);
+        if (novaVrstica)
+            System.out.println();
     }
 }
