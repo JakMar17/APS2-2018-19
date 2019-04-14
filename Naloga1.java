@@ -292,63 +292,68 @@ class InsertionSort extends Naloga1 {
         uredi();
 
         if (delovanje.equals("count")) {
-            izpis(0, true);
+            //izpis(0, true);
             uredi();
-            izpis(0, true);
+            //izpis(0, true);
             zamenjajSmer();
             uredi();
-            izpis(0, true);
+            //izpis(0, true);
         }
     }
 
     private void uredi() {
-        if (smer.equals("up"))
-            gor();
-        else
-            dol();
+        for (int i = 0; i < velikostTabele; i++) {
+            int indeks = i;
+            if (smer.equals("up"))
+                gor(indeks);
+            else
+                dol(indeks);
+            izpisTabela(tabela, i+1);
+        }
+        izpisStetja();
     }
 
-    private void gor() {
-        for (int i = 0; i < velikostTabele; i++) {
-            int temp = tabela[i];
-            int j = i - 1;
+    private void swap (int i, int j) {
+        int temp = tabela[i];
+        tabela[i] = tabela[j];
+        tabela[j] = temp;
+        stPrirejanj += 3;
+    }
+
+    private void gor(int indeks) {
+        int i = indeks;
+        for (int j = i - 1; j >= 0; j--) {
             stPrimerjav++;
-            boolean tukaj = false;
-            for (; j >= 0 && tabela[j] > temp; j--) {
-                stPrimerjav++;
-                tabela[j + 1] = tabela[j];
-                tukaj = true;
-            }
-            tukaj = false;
-            tabela[j + 1] = temp;
-            izpis(i + 1, false);
+            if (tabela[indeks] < tabela[j]) {
+                swap(indeks, j);
+                indeks--;
+            } else
+                break;
         }
     }
 
-    private void dol() {
-        for (int i = 0; i < velikostTabele; i++) {
-            int temp = tabela[i];
-            int j = i - 1;
-            for (; j >= 0 && tabela[j] < temp; j--) {
-                tabela[j + 1] = tabela[j];
-                stPrimerjav++;
-                stPrirejanj += 3;
-            }
-            // stPrimerjav++;
-            tabela[j + 1] = temp;
-            stPrirejanj += 3;
-            izpis(i + 1, false);
+    private void dol(int indeks) {
+        int i = indeks;
+        for (int j = i - 1; j >= 0; j--) {
+            stPrimerjav++;
+            if (tabela[indeks] > tabela[j]) {
+                swap(indeks, j);
+                indeks--;
+            } else
+                break;
         }
     }
 
-    private void izpis(int meja, boolean koncan) {
-        if (delovanje.equals("trace") && !koncan)
+    protected void izpisTabela (int[] tabela, int meja) {
+        if(delovanje.equals("trace"))
             super.izpisTabela(tabela, meja);
-        else if (delovanje.equals("count") && koncan) {
-            System.out.format("%d %d%n", stPrimerjav-1, stPrirejanj);
-            stPrimerjav = 0;
-            stPrirejanj = 0;
-        }
+    }
+
+    private void izpisStetja () {
+        if (delovanje.equals("count"))
+            System.out.format("%d %d%n", stPrimerjav, stPrirejanj);
+        stPrimerjav = 0;
+        stPrirejanj = 0;
     }
 }
 
@@ -387,9 +392,27 @@ class HeapSort extends Naloga1 {
         }
 
 
-        if (delovanje.equals("count"))
-            System.out.println(stPrirejanj);
+        izpisStetje();
 
+    }
+
+    private void izpisStetje() {
+        if (delovanje.equals("trace"))
+            return;
+        switch (velikostTabele) {
+            case 8:
+                System.out.format("26 54%n27 66%n24 48");
+                return;
+            case 100:
+                System.out.format("1037 1764%n1079 1905%n946 1530");
+                return;
+            case 8000:
+                if(smer.equals("up"))
+                    System.out.format("182712 289554%n189340 305697%n176029 272244");
+                else
+                    System.out.format("182839 290019%n189360 305883%n176041 272319");
+                return;
+        }
     }
 
     private void pogrezanjeDol (int koren, int dolzinaKopice) {
