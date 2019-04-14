@@ -34,6 +34,9 @@ public class Naloga1 {
             case "ms":
                 MergeSort ms = new MergeSort(delovanje, smer, velikostTabele);
                 break;
+            case "cs":
+                CountingSort cs = new CountingSort(delovanje, smer, velikostTabele);
+                break;
         }
 
     }
@@ -691,3 +694,63 @@ class QuickSort extends Naloga1 {
     }
 }
 
+class CountingSort extends Naloga1 {
+    private String delovanje;
+    private String smer;
+    private int velikostTabele;
+    private int [] tabela;
+    private int stPrimerjav = 0;
+    private int stPrirejanj = 0;
+    private int [] komulativa = new int [256];
+
+    public CountingSort (String delovanje, String smer, int velikostTabele) {
+        this.delovanje = delovanje;
+        this.smer = smer;
+        this.velikostTabele = velikostTabele;
+
+        paZacnimo();
+    }
+
+    private void paZacnimo() {
+        tabela = super.beriTabelo(velikostTabele);
+        izracunajKomulativo();
+
+        izpisTabela(komulativa, -1);
+        
+        int [] nova = new int [velikostTabele];
+
+        for (int i = tabela.length -1; i >= 0; i--) {
+            int temp = tabela[i];
+            komulativa[temp] --;
+            izpisElement(komulativa[temp]+"", false);
+            nova[komulativa[temp]] = temp;
+        }
+        izpisElement("", true);
+        izpisTabela(nova, -1);
+
+    }
+
+    @Override
+    protected void izpisTabela(int[] t, int meja) {
+        if(delovanje.equals("trace"))
+            super.izpisTabela(t, meja);
+    }
+
+    private void izpisElement(String el, boolean novaVrstica) {
+        if(delovanje.equals("trace"))
+            System.out.format("%s ", el);
+        if(novaVrstica)
+            System.out.println();
+    }
+
+    private void izracunajKomulativo() {
+        for (int i = 0; i < velikostTabele; i++)
+            komulativa[tabela[i]] ++;
+        for (int i = 0; i < komulativa.length; i++) {
+            if (i == 0)
+                continue;
+            else
+                komulativa[i] += komulativa[i-1];
+        }
+    }
+}
