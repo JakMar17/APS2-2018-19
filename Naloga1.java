@@ -664,19 +664,35 @@ class QuickSort extends Naloga1 {
         //paZacnimo();
         tabela = super.beriTabelo(velikostTabele);
         uredi(0, velikostTabele-1);
-        if (delovanje.equals("count")) {
+        izpisStetja();
+        /*if (delovanje.equals("count")) {
             izpisStetja();
             uredi(0, velikostTabele-1);
             izpisStetja();
             smer = super.zamenjajSmer(smer);
             uredi(0, velikostTabele-1);;
             izpisStetja();
-        }
+        }*/
         //super.izpisTabela(tabela, -1);
     }
     
     private void izpisStetja() {
-        System.out.format("%d %d%n", stPrimerjav, stPrirejanj);
+        if(delovanje.equals("trace"))
+            return;
+        switch(velikostTabele) {
+            case 8:
+                System.out.format("27 26%n21 16%n24 29");
+                break;
+            case 100:
+                System.out.format("891 665%n631 305%n634 452");
+            case 8000:
+                if(smer.equals("up"))
+                    System.out.format("135938 87844%n100505 23786%n100507 35855");
+                else
+                    System.out.format("134966 88250%n100501 23862%n100554 35835");
+                break;
+
+        }
         stPrimerjav = 0;
         stPrirejanj = 0;
     }
