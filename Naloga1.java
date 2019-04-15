@@ -375,137 +375,110 @@ class HeapSort extends Naloga1 {
 
     private void paZacnimo () {
         this.tabela = super.beriTabelo(velikostTabele);
+        uredi();
 
-        for (int dolzinaKopice = tabela.length-1; dolzinaKopice >= 0; dolzinaKopice--) {
-            if (smer.equals("up"))
-                pogrezanjeGor(0, dolzinaKopice);
-            else
-                pogrezanjeDol(0, dolzinaKopice);
+        if(delovanje.equals("count")) {
+            izpisStetje();
+            uredi();
+            izpisStetje();
+            smer = super.zamenjajSmer(smer);
+            uredi();
+            izpisStetje();
+        }
+    }
 
-            if (delovanje.equals("trace"))
-                izpisTabela(dolzinaKopice);
-
-            int temp = tabela[dolzinaKopice];
-            tabela[dolzinaKopice] = tabela[0];
-            tabela[0] = temp;
-            //stPrirejanj += 3;
+    private void uredi() {
+        for (int i = (velikostTabele/2) -1; i >= 0; i--)
+            pogrezanje(i, velikostTabele);
+        
+        for (int i = velikostTabele-1; i >= 0; i--) {
+            izpisTabela(i);
+            stPrirejanj += 3;
+            swap(0, i);
+            pogrezanje(0,i);
         }
 
+        //izpisTabela(dolzinaKopice);
+    }
 
-        izpisStetje();
+    private void pogrezanje(int starKoren, int dolzinaKopice) {
+        int lSin = 2*starKoren+1;
+        int dSin = lSin+1;
+        int koren = starKoren;
 
+        pogrezanjeDol(lSin, dSin, starKoren, koren, dolzinaKopice);
+        pogrezanjeGor(lSin, dSin, starKoren, koren, dolzinaKopice);
+
+
+
+    }
+
+    private void pogrezanjeGor (int lSin, int dSin, int starKoren, int koren, int dolzinaKopice) {
+        if(smer.equals("down"))
+            return;
+
+        if (lSin < dolzinaKopice) {
+            stPrimerjav++;
+            if (tabela[lSin] > tabela[koren])
+                koren = lSin;
+        }
+
+        if(dSin < dolzinaKopice) {
+            stPrimerjav++;
+            if(tabela[dSin] > tabela[koren])
+                koren = dSin;
+        }
+
+        if (koren != starKoren) {
+            stPrirejanj += 3;
+            swap(koren, starKoren);
+            pogrezanje(koren, dolzinaKopice);
+        }
+    }
+
+    private void pogrezanjeDol (int lSin, int dSin, int starKoren, int koren, int dolzinaKopice) {
+        if (smer.equals("up"))
+            return;
+        if (lSin < dolzinaKopice) {
+            stPrimerjav++;
+            if (tabela[lSin] < tabela[koren])
+                koren = lSin;
+        }
+
+        if (dSin < dolzinaKopice) {
+            stPrimerjav++;
+            if (tabela[dSin] < tabela[koren])
+                koren = dSin;
+        }
+
+        if (koren != starKoren) {
+            stPrirejanj += 3;
+            swap(koren, starKoren);
+            pogrezanje(koren, dolzinaKopice);
+        }
     }
 
     private void izpisStetje() {
         if (delovanje.equals("trace"))
             return;
-        switch (velikostTabele) {
-            case 8:
-                System.out.format("26 54%n27 66%n24 48");
-                return;
-            case 100:
-                System.out.format("1037 1764%n1079 1905%n946 1530");
-                return;
-            case 8000:
-                if(smer.equals("up"))
-                    System.out.format("182712 289554%n189340 305697%n176029 272244");
-                else
-                    System.out.format("182839 290019%n189360 305883%n176041 272319");
-                return;
-        }
+        System.out.format("%d %d%n", stPrimerjav, stPrirejanj-3);
+        stPrimerjav = 0;
+        stPrirejanj = 0;
     }
 
-    private void pogrezanjeDol (int koren, int dolzinaKopice) {
-        int leviSin = 2* koren +1, desniSin = 2* koren +2;
-        int temp = -1;
-
-        if (leviSin <= dolzinaKopice)
-            pogrezanjeDol(leviSin, dolzinaKopice);
-        else
-            return;
-
-        if (desniSin <= dolzinaKopice)
-            pogrezanjeDol(desniSin, dolzinaKopice);
-
-        if (desniSin > dolzinaKopice) {
-            if (tabela[leviSin] < tabela[koren]) {
-                // zamenjamo levi sin & koren
-                temp = tabela[leviSin];
-                tabela[leviSin] = tabela[koren];
-                tabela[koren] = temp;
-                pogrezanjeDol(leviSin, dolzinaKopice);
-            }
-        } else {
-            int indeks;
-            if (smer.equals("up"))
-                indeks = max(tabela, koren, leviSin, desniSin);
-            else
-                indeks = min(tabela, koren, leviSin, desniSin);
-
-            if (indeks == 0)
-                return;
-            else if (indeks == 1) {
-                // zamenjamo koren & levi sin
-                temp = tabela[leviSin];
-                tabela[leviSin] = tabela[koren];
-                tabela[koren] = temp;
-                pogrezanjeDol(leviSin, dolzinaKopice);
-            } else if (indeks == 2) {
-                // zamenjamo koren & desni sin
-                temp = tabela[desniSin];
-                tabela[desniSin] = tabela[koren];
-                tabela[koren] = temp;
-                pogrezanjeDol(desniSin, dolzinaKopice);
-            }
-        }
+    private void swap (int i, int j) {
+        //stPrirejanj += 3;
+        int temp = tabela[i];
+        tabela[i] = tabela[j];
+        tabela[j] = temp;
     }
 
-    private void pogrezanjeGor (int koren, int dolzinaKopice) {
-        int leviSin = 2 * koren + 1;
-        int desniSin = 2 * koren + 2;
-        int temp = -1;
-
-        if (leviSin <= dolzinaKopice)
-            pogrezanjeGor(leviSin, dolzinaKopice);
-        else
-            return;
-
-        if (desniSin <= dolzinaKopice)
-            pogrezanjeGor(desniSin, dolzinaKopice);
-
-        if (desniSin > dolzinaKopice) {
-            if (tabela[leviSin] > tabela[koren]) {
-                // zamenjamo levi sin & koren
-                temp = tabela[leviSin];
-                tabela[leviSin] = tabela[koren];
-                tabela[koren] = temp;
-                stPrirejanj += 3;
-                pogrezanjeGor(leviSin, dolzinaKopice);
-            }
-        } else {
-            int maks = max(tabela, koren, leviSin, desniSin);
-
-            if (maks == 0)
-                return;
-            else if (maks == 1) {
-                // zamenjamo koren & levi sin
-                temp = tabela[leviSin];
-                tabela[leviSin] = tabela[koren];
-                tabela[koren] = temp;
-                stPrirejanj += 3;
-                pogrezanjeGor(leviSin, dolzinaKopice);
-            } else if (maks == 2) {
-                // zamenjamo koren & desni sin
-                temp = tabela[desniSin];
-                tabela[desniSin] = tabela[koren];
-                tabela[koren] = temp;
-                stPrirejanj += 3;
-                pogrezanjeGor(desniSin, dolzinaKopice);
-            }
-        }
-    }
+    
     //@Override
     protected void izpisTabela(int dolzinaKopice) {
+        if(delovanje.equals("count"))
+            return;
+
         int nivo = 1, stevec = 1;
 
         for (int i = 0; i <= dolzinaKopice; i++) {
@@ -709,13 +682,16 @@ class QuickSort extends Naloga1 {
     }
 
     private void uredi(int spodnjaMeja, int zgornjaMeja) {
-        if (spodnjaMeja >= zgornjaMeja)
+        if (spodnjaMeja >= zgornjaMeja) {
             return;
+        }
         int i = spodnjaMeja;
         int j = zgornjaMeja;
         int pivot = tabela[(spodnjaMeja+zgornjaMeja) /2];
+        //stPrirejanj += 3;
 
         while (i <= j) {
+            stPrimerjav++;
             if (smer.equals("up")) {
                 while (tabela[i] < pivot) { 
                     i++;
@@ -742,10 +718,12 @@ class QuickSort extends Naloga1 {
             }
         }
         izpis(j+1, i, spodnjaMeja, zgornjaMeja);
+        //izpis(-1, -1, 0, velikostTabele-1);
 
         uredi(spodnjaMeja, j);
         uredi(j+1, i-1);
         uredi(i, zgornjaMeja);
+
     }
 
     private void izpis(int meja1, int meja2, int spodnjaMeja, int zgornjaMeja) {
