@@ -688,36 +688,84 @@ class QuickSort extends Naloga1 {
         this.smer = smer;
         this.velikostTabele = velikostTabele;
 
-        paZacnimo();
-    }
-
-    private void paZacnimo() {
+        //paZacnimo();
         tabela = super.beriTabelo(velikostTabele);
-        quickSort(0, tabela.length-1);
-        super.izpisTabela(tabela, tabela.length);
+        uredi(0, velikostTabele-1);
+        if (delovanje.equals("count")) {
+            izpisStetja();
+            uredi(0, velikostTabele-1);
+            izpisStetja();
+            smer = super.zamenjajSmer(smer);
+            uredi(0, velikostTabele-1);;
+            izpisStetja();
+        }
+        //super.izpisTabela(tabela, -1);
+    }
+    
+    private void izpisStetja() {
+        System.out.format("%d %d%n", stPrimerjav, stPrirejanj);
+        stPrimerjav = 0;
+        stPrirejanj = 0;
     }
 
-    private void quickSort (int levi, int desni) {
-        int pivot = tabela[(levi+desni)/2];
-        int i = levi, j = desni;
+    private void uredi(int spodnjaMeja, int zgornjaMeja) {
+        if (spodnjaMeja >= zgornjaMeja)
+            return;
+        int i = spodnjaMeja;
+        int j = zgornjaMeja;
+        int pivot = tabela[(spodnjaMeja+zgornjaMeja) /2];
 
         while (i <= j) {
-            while (tabela[i] < pivot)
-                i ++;
-            while (tabela[j] > pivot)
-                j--;
+            if (smer.equals("up")) {
+                while (tabela[i] < pivot) { 
+                    i++;
+                    stPrimerjav++;
+                }
+                while (tabela[j] > pivot) { 
+                    j--;
+                    stPrimerjav++;
+                }
+            } else {
+                while (tabela[i] > pivot) { 
+                    i++;
+                    stPrimerjav++;
+                }
+                while (tabela[j] < pivot) { 
+                    j--;
+                    stPrimerjav++;
+                }
+            }
             if (i <= j) {
                 swap(i, j);
                 i++;
                 j--;
             }
         }
+        izpis(j+1, i, spodnjaMeja, zgornjaMeja);
+
+        uredi(spodnjaMeja, j);
+        uredi(j+1, i-1);
+        uredi(i, zgornjaMeja);
     }
 
-    private void swap (int i, int j) {
-        int temp = tabela[i];
-        tabela[i] = tabela[j];
-        tabela[j] = temp;
+    private void izpis(int meja1, int meja2, int spodnjaMeja, int zgornjaMeja) {
+        if(delovanje.equals("trace")) {
+            for (int i = spodnjaMeja; i <= zgornjaMeja; i++) {
+                if (i == meja1 && i == meja2)
+                    System.out.format("| | ");
+                else if (i == meja1 || i == meja2)
+                    System.out.format("| ");
+                System.out.format("%d ", tabela[i]);
+            }
+            System.out.println();
+        }
+    }
+
+    private void swap(int a, int b) {
+        int temp = tabela[a];
+        tabela[a] = tabela[b];
+        tabela[b] = temp;
+        stPrirejanj += 3;
     }
 }
 
