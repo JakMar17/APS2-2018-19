@@ -679,20 +679,7 @@ class QuickSort extends Naloga1 {
     private void izpisStetja() {
         if(delovanje.equals("trace"))
             return;
-        switch(velikostTabele) {
-            case 8:
-                System.out.format("27 26%n21 16%n24 29");
-                break;
-            case 100:
-                System.out.format("891 665%n631 305%n634 452");
-            case 8000:
-                if(smer.equals("up"))
-                    System.out.format("135938 87844%n100505 23786%n100507 35855");
-                else
-                    System.out.format("134966 88250%n100501 23862%n100554 35835");
-                break;
-
-        }
+        System.out.format("%d %d%n", stPrimerjav, stPrirejanj);
         stPrimerjav = 0;
         stPrirejanj = 0;
     }
@@ -705,28 +692,33 @@ class QuickSort extends Naloga1 {
         int j = zgornjaMeja;
         int pivot = tabela[(spodnjaMeja+zgornjaMeja) /2];
         //stPrirejanj += 3;
-
+        stPrimerjav++;
         while (i <= j) {
             stPrimerjav++;
             if (smer.equals("up")) {
+                stPrimerjav++;
                 while (tabela[i] < pivot) { 
                     i++;
-                    stPrimerjav++;
+                    //stPrimerjav++;
                 }
+                stPrimerjav++;
                 while (tabela[j] > pivot) { 
                     j--;
-                    stPrimerjav++;
+                    //stPrimerjav++;
                 }
             } else {
+                stPrimerjav++;
                 while (tabela[i] > pivot) { 
                     i++;
-                    stPrimerjav++;
+                    //stPrimerjav++;
                 }
+                stPrimerjav++;
                 while (tabela[j] < pivot) { 
                     j--;
-                    stPrimerjav++;
+                    //stPrimerjav++;
                 }
             }
+            stPrimerjav++;
             if (i <= j) {
                 swap(i, j);
                 i++;
