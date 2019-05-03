@@ -79,10 +79,11 @@ public class Izziv7 {
         int dolzinaZapisa = m.length();
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                String element = vandermondovaMatrika[i][j] + "";
+                /*String element = vandermondovaMatrika[i][j] + "";
                 while (element.length() < dolzinaZapisa)
                     element = " " + element;
-                System.out.format(" %s ", element);
+                System.out.format(" %s ", element);*/
+                System.out.format("%2d ", vandermondovaMatrika[i][j]);
             }
             System.out.println();
         }
