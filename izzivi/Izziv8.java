@@ -21,7 +21,7 @@ public class Izziv8 {
             rezultat[i] = x2.times(x1).conj();
         }
 
-        rezultat = razdeli(rezultat, false);
+        rezultat = razdeli(rezultat, true);
 
         konjugiraj(rezultat);
         for (int i = 0; i < rezultat.length; i++)
