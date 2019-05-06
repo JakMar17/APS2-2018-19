@@ -34,13 +34,9 @@ public class Naloga2Matrike {
                 st.razsiriMatrike(matrikaA, matrikaB);
                 matrikaA = st.matrikaA;
                 matrikaB = st.matrikaB;
-                izpisMatrike(matrikaA);
-                izpisMatrike(matrikaB);
-                System.out.println();
-                System.out.println();
-
                 rezultat = st.mnozenjeStrassen(matrikaA, matrikaB);
-                izpisMatrike(rezultat);
+                rezultat = st.praviStrassen(matrikaA, matrikaB);
+                izpis(rezultat, getDimenzije(rezultat));
                 break;
         }
     }
@@ -54,7 +50,7 @@ public class Naloga2Matrike {
         izpisMatrike(matrika);
     }
 
-    private static void izpisMatrike (int [][] matrika) {
+    protected static void izpisMatrike (int [][] matrika) {
         for (int i = 0; i < matrika.length; i++) {
             for (int j = 0; j < matrika[i].length; j++)
                 System.out.print(matrika[i][j] + " ");
@@ -76,7 +72,7 @@ public class Naloga2Matrike {
         int i = 1;
         for (;;) {
             int potenca = (int) Math.pow (2,i);
-            if (potenca >= x)
+            if (potenca > x)
                 return potenca;
             i++;
         }
@@ -90,6 +86,14 @@ public class Naloga2Matrike {
                 matrika[i][j] = sc.nextInt();
 
         return matrika;
+    }
+
+    public static String getDimenzije(int[][] matrika) {
+        String dimenzije = "DIMS: ";
+        int vrstic = matrika.length;
+        int stolpcev = matrika[0].length;
+
+        return dimenzije + vrstic + "x" + stolpcev;
     }
 
 }
@@ -117,14 +121,6 @@ class OsnovnoMnozenje extends Matrike {
 
         return rezultat;
     }
-    
-    public String getDimenzije(int [][] matrika) {
-        String dimenzije = "DIMS: ";
-        int vrstic = matrika.length;
-        int stolpcev = matrika[0].length;
-    
-        return dimenzije + vrstic +  "x" + stolpcev;
-    }
 
 }
 
@@ -137,7 +133,6 @@ class Strassen extends Matrike {
 
     public Strassen(int meja) {
         this.meja = meja;
-        //matrikaC = mnozenjeStrassen(matrikaA, matrikaB);
     }
 
     public int[][] mnozenjeStrassen(int[][] matrikaA, int[][] matrikaB) {
@@ -155,29 +150,80 @@ class Strassen extends Matrike {
         int[][] b21 = super.razdeliMatriko(matrikaB, dimenzija / 2, 0);
         int[][] b22 = super.razdeliMatriko(matrikaB, dimenzija / 2, dimenzija / 2);
 
+        
+        int [][] m1 = mnozenjeStrassen(a11, super.razlikaMatrik(b12, b22));
+        int p1 = super.vsotaSkalar(m1);
+        System.out.println(p1);
+
+        int [][] m2 = mnozenjeStrassen(super.vsotaMatrik(a11, a12), b22);
+        int p2 = super.vsotaSkalar(m2);
+        System.out.println(p2);
+
+        int [][] m3 = mnozenjeStrassen(super.vsotaMatrik(a21, a22), b11);
+        int p3 = super.vsotaSkalar(m3);
+        System.out.println(p3);
+
+        int [][] m4 = mnozenjeStrassen(a22, super.razlikaMatrik(b21, b11));
+        int p4 = super.vsotaSkalar(m4);
+        System.out.println(p4);
+
+        int [][] m5 = mnozenjeStrassen(super.vsotaMatrik(a11, a22), super.vsotaMatrik(b11, b22));
+        int p5 = super.vsotaSkalar(m5);
+        System.out.println(p5);
+
+        int [][] m6 = mnozenjeStrassen(super.razlikaMatrik(a12, a22), super.vsotaMatrik(b21, b22));
+        int p6 = super.vsotaSkalar(m6);
+        System.out.println(p6);
+
+        int [][] m7 = mnozenjeStrassen(super.razlikaMatrik(a11, a21), super.vsotaMatrik(b11, b12));
+        int p7 = super.vsotaSkalar(m7);
+        System.out.println(p7);
+
+        int c [][] = new int [2][2];
+        c [0][0] = p5 + p4 - p2 + p6;
+        c [0][1] = p1 + p2;
+        c [1][0] = p3 + p4;
+        c [1][1] = p1 + p5 - p3 - p7;
+        return c;
+    }
+
+    public int [][] praviStrassen (int [][] matrikaA, int [][] matrikaB) {
+        int dimenzija = matrikaA.length;
+        if (dimenzija == meja)
+            return super.mnozenjeMatrik(matrikaA, matrikaB);
+
+        int[][] a11 = razdeliMatriko(matrikaA, 0, 0);
+        int[][] a12 = super.razdeliMatriko(matrikaA, 0, dimenzija / 2);
+        int[][] a21 = super.razdeliMatriko(matrikaA, dimenzija / 2, 0);
+        int[][] a22 = super.razdeliMatriko(matrikaA, dimenzija / 2, dimenzija / 2);
+        int[][] b11 = super.razdeliMatriko(matrikaB, 0, 0);
+        int[][] b12 = super.razdeliMatriko(matrikaB, 0, dimenzija / 2);
+        int[][] b21 = super.razdeliMatriko(matrikaB, dimenzija / 2, 0);
+        int[][] b22 = super.razdeliMatriko(matrikaB, dimenzija / 2, dimenzija / 2);
+
         int[][] temp1 = super.vsotaMatrik(a11, a22);
         int[][] temp2 = super.vsotaMatrik(b11, b22);
-        int[][] m1 = mnozenjeStrassen(temp1, temp2);
+        int[][] m1 = praviStrassen(temp1, temp2);
 
         temp1 = super.vsotaMatrik(a21, a22);
-        int[][] m2 = mnozenjeStrassen(temp1, b11);
+        int[][] m2 = praviStrassen(temp1, b11);
 
         temp2 = super.razlikaMatrik(b12, b22);
-        int[][] m3 = mnozenjeStrassen(a11, temp2);
+        int[][] m3 = praviStrassen(a11, temp2);
 
         temp2 = super.razlikaMatrik(b21, b11);
-        int[][] m4 = mnozenjeStrassen(a22, temp2);
+        int[][] m4 = praviStrassen(a22, temp2);
 
         temp1 = super.vsotaMatrik(a11, a12);
-        int[][] m5 = mnozenjeStrassen(temp1, b22);
+        int[][] m5 = praviStrassen(temp1, b22);
 
         temp1 = super.razlikaMatrik(a21, a11);
         temp2 = super.vsotaMatrik(b11, b12);
-        int[][] m6 = mnozenjeStrassen(temp1, temp2);
+        int[][] m6 = praviStrassen(temp1, temp2);
 
         temp1 = super.razlikaMatrik(a12, a22);
         temp2 = super.vsotaMatrik(b21, b22);
-        int[][] m7 = mnozenjeStrassen(temp1, temp2);
+        int[][] m7 = praviStrassen(temp1, temp2);
 
         temp1 = super.vsotaMatrik(m1, m4);
         temp2 = super.razlikaMatrik(temp1, m5);
@@ -191,15 +237,7 @@ class Strassen extends Matrike {
         temp2 = super.razlikaMatrik(temp1, m2);
         int[][] c22 = super.vsotaMatrik(temp2, m6);
 
-        vrednostM(m1, 1);
-        vrednostM(m2, 2);
-        vrednostM(m3, 3);
-        vrednostM(m4, 4);
-        vrednostM(m5, 5);
-        vrednostM(m6, 6);
-        vrednostM(m7, 7);
         return zdruziVse(c11, c12, c21, c22, dimenzija);
-
     }
 
     private void vrednostM(int[][] m, int i) {
