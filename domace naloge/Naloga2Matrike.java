@@ -28,10 +28,16 @@ public class Naloga2Matrike {
                 matrikaA = narediMatriko(sc.nextInt(), sc.nextInt());
                 matrikaB = narediMatriko(sc.nextInt(), sc.nextInt());
                 Blocno bl = new Blocno(matrikaA, matrikaB, velikostBlokov);
-                rezultat = bl.getRezultat(matrikaA, matrikaB);
+                rezultat = bl.getRezultat();
                 izpis(rezultat, getDimenzije(rezultat));
                 break;
             case "dv":
+                int ustavitveniPogoj = sc.nextInt();
+                matrikaA = narediMatriko(sc.nextInt(), sc.nextInt());
+                matrikaB = narediMatriko(sc.nextInt(), sc.nextInt());
+                DeliInVladaj dv = new DeliInVladaj(matrikaA, matrikaB, ustavitveniPogoj);
+                rezultat = dv.getRezultat();
+                izpis(rezultat, getDimenzije(rezultat));
                 break;
             case "st":
                 Strassen st = new Strassen(sc.nextInt());
@@ -296,6 +302,135 @@ class DeliInVladaj extends Matrike {
     private int [][] matrikaB;
     private int [][] rezultat;
     private int velikostBloka;
+    private int ustavitveniPogoj = 1;
+
+    public DeliInVladaj (int [][] matrikaA, int [][] matrikaB, int ustavitveniPogoj) {
+        this.matrikaA = matrikaA;
+        this.matrikaB = matrikaB;
+        razsiriMatrike(this.matrikaA, this.matrikaB);
+        //this.rezultat = new int [matrikaA.length][matrikaB[0].length];
+        this.ustavitveniPogoj = ustavitveniPogoj;
+    }
+
+    private int [][] mnozenje (int [][] matrika1, int [][] matrika2) {
+        int d = matrika1.length/2;
+        int [][] rez = new int [matrika1.length][matrika1.length];
+
+        //super.izpisMatrike(matrika1);
+        int [][] a11 = podMatrika(matrika1, 0, 0, d, d);
+        //super.izpisMatrike(a11);
+        int [][] a12 = podMatrika(matrika1, 0, d, d, d);
+        int [][] a21 = podMatrika(matrika1, d, 0, d, d);
+        int [][] a22 = podMatrika(matrika1, d, d, d, d);
+
+        int [][] b11 = podMatrika(matrika2, 0, 0, d, d);
+        int [][] b12 = podMatrika(matrika2, 0, d, d, d);
+        int [][] b21 = podMatrika(matrika2, d, 0, d, d);
+        int [][] b22 = podMatrika(matrika2, d, d, d, d);
+
+        int [][] m1;
+        int [][] m2;
+        int [][] m3;
+        int [][] m4;
+        int [][] m5;
+        int [][] m6;
+        int [][] m7;    
+        int [][] m8;   
+
+        if (d == ustavitveniPogoj) {
+            m1 = super.mnozenjeMatrik(a11, b11);
+                izpisSkalarja(m1);
+            m2 = super.mnozenjeMatrik(a12, b21);
+                izpisSkalarja(m2);
+            m3 = super.mnozenjeMatrik(a11, b12);
+                izpisSkalarja(m3);
+            m4 = super.mnozenjeMatrik(a12, b22);
+                izpisSkalarja(m4);
+            m5 = super.mnozenjeMatrik(a21, b11);
+                izpisSkalarja(m5);
+            m6 = super.mnozenjeMatrik(a22, b21);
+                izpisSkalarja(m6);
+            m7 = super.mnozenjeMatrik(a21, b12);
+                izpisSkalarja(m7);
+            m8 = super.mnozenjeMatrik(a22, b22);
+                izpisSkalarja(m8);
+        } else {
+            m1 = mnozenje(a11, b11);
+                izpisSkalarja(m1);
+            m2 = mnozenje(a12, b21);
+                izpisSkalarja(m2);
+            m3 = mnozenje(a11, b12);
+                izpisSkalarja(m3);
+            m4 = mnozenje(a12, b22);
+                izpisSkalarja(m4);
+            m5 = mnozenje(a21, b11);
+                izpisSkalarja(m5);
+            m6 = mnozenje(a22, b21);
+                izpisSkalarja(m6);
+            m7 = mnozenje(a21, b12);
+                izpisSkalarja(m7);
+            m8 = mnozenje(a22, b22);
+                izpisSkalarja(m8);
+        }
+
+        int [][] delna1 = super.vsotaMatrik(m1, m2);
+        int [][] delna2 = super.vsotaMatrik(m3, m4);
+        int [][] delna3 = super.vsotaMatrik(m5, m6);
+        int [][] delna4 = super.vsotaMatrik(m7, m8);
+
+        rez = super.zdruziMatriko(delna1, rez, 0, 0);
+        rez = super.zdruziMatriko(delna2, rez, 0, d);
+        rez = super.zdruziMatriko(delna3, rez, d, 0);
+        rez = super.zdruziMatriko(delna4, rez, d, d);
+
+        return rez;
+    }
+
+    private boolean izpisSkalarja (int [][] matrika) {
+        int i = super.vsotaSkalar(matrika);
+        System.out.println(i);
+
+        return true;
+    }
+
+    protected void razsiriMatrike(int[][] matrika1, int[][] matrika2) {
+        int[] t1 = { matrika1.length, matrika2.length };
+        int v = super.maks(t1);
+        v = super.naslednjaPotenca(v, 2);
+        int[] t2 = { matrika1[0].length, matrika2[0].length };
+        int s = super.maks(t2);
+        s = super.naslednjaPotenca(s, 2);
+
+        matrikaA = new int[v][s];
+        matrikaB = new int[v][s];
+        matrikaA = razsiriMatriko(matrika1, matrikaA);
+        matrikaB = razsiriMatriko(matrika2, matrikaB);
+
+    }
+
+    private int[][] razsiriMatriko(int[][] original, int[][] razsirjena) {
+        for (int i = 0; i < original.length; i++)
+            for (int j = 0; j < original[i].length; j++)
+                razsirjena[i][j] = original[i][j];
+
+        return razsirjena;
+    }
+
+    private int [][] podMatrika (int [][] stars, int vrstica, int stolpec, int dimI, int dimJ) {
+        int [][] matrika = new int [dimI][dimJ];
+
+        for (int i = 0; i < dimI; i++)
+            for (int j = 0; j < dimJ; j++)
+                matrika[i][j] = stars[vrstica +i][stolpec +j];
+        
+        return matrika;
+    }
+
+    public int [][] getRezultat () {
+        rezultat = mnozenje(matrikaA, matrikaB);
+        return rezultat;
+    }
+
 }
 
 class Blocno extends Matrike {
@@ -303,6 +438,7 @@ class Blocno extends Matrike {
     private int [][] matrikaB;
     private int [][] rezultat;
     private int velikostBloka;
+    private int steviloBlokov;
     private int originalX;
     private int originalY;
 
@@ -310,48 +446,56 @@ class Blocno extends Matrike {
         originalX = matrikaA.length;
         originalY = matrikaB[0].length;
         this.velikostBloka = velikostBloka;
+        this.steviloBlokov = matrikaA.length/velikostBloka;
         razsiriMatrike(matrikaA, matrikaB);
         //super.izpisMatrike(matrikaA);
         rezultat = mnozenje(this.matrikaA, this.matrikaB);
         //super.izpisMatrike(rezultat);
     }
 
-    protected int [][] mnozenje (int [][] matrika1, int[][] matrika2) {
-        int [][] matrika = new int [matrika1.length] [matrika2[0].length];
+    private int [][] mnozenje (int [][] matrikaA, int [][] matrikaB) {
+        Matrika [][] bloki1 = new Matrika [steviloBlokov][steviloBlokov];
+        Matrika [][] bloki2 = new Matrika [steviloBlokov][steviloBlokov];
 
-        System.out.println("-----");
-        super.izpisMatrike(matrika1);
-        System.out.println("-----");
-        super.izpisMatrike(matrika2);
-        System.out.println("-----");
+        Matrika rezultat = new Matrika (matrikaA.length, matrikaB[0].length);
         
-        int x = 0, y = 0;
-        int izpis = 0;
-        for (int i = 0; i < matrikaA.length; i += velikostBloka) {
-            for (int j = 0; j < matrikaB[i].length; j+= velikostBloka) {
-                int [][] a = razdeliMatriko(matrika1, i, i+velikostBloka, j, j+velikostBloka);
-                int [][] b = razdeliMatriko(matrika2, j, j + velikostBloka, i, i+velikostBloka);
-                
-                int [][] c;
-                if (prazna(a))
-                    c = b;
-                else if (prazna(b))
-                    c = a;
-                else
-                    c = super.mnozenjeMatrik(a, b);
-                
-                int cVsota = super.vsotaSkalar(c);
-                System.out.println(cVsota);
-                if (izpis < originalY) {
-                    izpis++;
-                }
-                matrika = vstaviMatriko(matrika, c, x, y);
-                //super.izpisMatrike(matrika);
-                x += velikostBloka; 
-                y += velikostBloka;
+        for (int i = 0, ii = 0; i < bloki1.length; i++, ii += velikostBloka) {
+            for (int j = 0, jj = 0; j < bloki2[i].length; j++, jj += velikostBloka) {
+                System.out.println("tukaj");
+                bloki1[i][j] = new Matrika (velikostBloka, velikostBloka);
+                bloki2[i][j] = new Matrika (velikostBloka, velikostBloka);
+
+                for (int k = 0; k < velikostBloka; k++)
+                    for (int l = 0; l < velikostBloka; l++)
+                        if (i + ii < matrikaA.length && j + jj < matrikaB[0].length) {
+                            bloki1[i][j].setVrednost(i, j, matrikaA[i+ii][j+jj]);
+                            bloki2[i][j].setVrednost(i, j, matrikaB[i+ii][j+jj]);
+                        }
+
+                System.out.println(i + " " + j);
             }
         }
-        return matrika;
+
+        for (int i = 0, ii = 0; i < bloki1.length; i++, ii += velikostBloka) {
+            for (int j = 0, jj = 0; j < bloki2[i].length; j++, jj += velikostBloka) {
+                
+                Matrika blok = new Matrika(velikostBloka, velikostBloka);
+                for (int k = 0; k < bloki2.length; k++) {
+                    Matrika tmp = new Matrika (super.mnozenjeMatrik(bloki1[i][k].getTabela(), bloki2[k][j].getTabela()));
+                    blok.setTabela(super.vsotaMatrik(tmp.getTabela(), blok.getTabela()));
+                    System.out.println(super.vsotaSkalar(tmp.getTabela()));
+                }
+                for (int k = ii; k < rezultat.getTabela().length; k++)
+                    for (int l = jj; l < rezultat.getTabela()[k].length; l++)
+                        rezultat.setVrednost(k, l, blok.getVrednost(k % velikostBloka, l % velikostBloka));
+            }
+        }
+
+        return rezultat.getTabela();
+    }
+
+    public int [][] getRezultat () {
+        return rezultat;
     }
 
     private boolean prazna (int [][] matrika) {
@@ -411,16 +555,6 @@ class Blocno extends Matrike {
         return original;
     }
 
-    protected int[][] getRezultat (int [][] matrika1, int[][] matrika2) {
-        /*int [][] matrika = new int [originalX][originalY];
-
-        for (int i = 0; i < originalX; i++)
-            for (int j = 0; j < originalY; j++)
-                matrika[i][j] = rezultat[i][j];
-        
-        return matrika;*/
-        return mnozenjeMatrik(matrika1, matrika2);
-    }
 
     @Override
     protected int[][] mnozenjeMatrik(int[][] matrikaA, int[][] matrikaB) {
@@ -507,5 +641,35 @@ class Matrike extends Naloga2Matrike {
                     rezultat[i][j] += matrikaA[i][k] * matrikaB[k][j];
 
         return rezultat;
+    }
+}
+
+class Matrika extends Matrike {
+    private int[][] matrika;
+
+    public Matrika (int [][] matrika) {
+        this.matrika = matrika;
+    }
+
+    public Matrika (int x, int y) {
+        this.matrika = new int [x][y];
+    }
+
+    public boolean setVrednost(int i, int j, int vrednost) {
+        matrika[i][j] = vrednost;
+        return true;
+    }
+
+    public int getVrednost(int i, int j) {
+        return matrika[i][j];
+    }
+
+    public int [][] getTabela () {
+        return matrika;
+    }
+
+    public boolean setTabela (int [][] tabela) {
+        this.matrika = tabela;
+        return true;
     }
 }
