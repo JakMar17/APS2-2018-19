@@ -252,10 +252,6 @@ class Strassen extends Matrike {
         return zdruziVse(c11, c12, c21, c22, dimenzija);
     }
 
-    private void vrednostM(int[][] m, int i) {
-        System.out.format("m%d: %d%n", i, super.vsotaSkalar(m));
-    }
-
     private int[][] zdruziVse(int[][] c11, int[][] c12, int[][] c21, int[][] c22, int dimenzija) {
         int[][] rezultat = new int[dimenzija][dimenzija];
 
@@ -415,16 +411,6 @@ class DeliInVladaj extends Matrike {
 
         return razsirjena;
     }
-
-    /*private int [][] podMatrika (int [][] stars, int vrstica, int stolpec, int dimI, int dimJ) {
-        int [][] matrika = new int [dimI][dimJ];
-
-        for (int i = 0; i < dimI; i++)
-            for (int j = 0; j < dimJ; j++)
-                matrika[i][j] = stars[vrstica +i][stolpec +j];
-        
-        return matrika;
-    }*/
 
     public int [][] getRezultat () {
         rezultat = mnozenje(matrikaA, matrikaB);
@@ -604,35 +590,5 @@ class Matrike extends Naloga2Matrike {
                 matrika[i][j] = stars[vrstica + i][stolpec + j];
 
         return matrika;
-    }
-}
-
-class Matrika extends Matrike {
-    private int[][] matrika;
-
-    public Matrika (int [][] matrika) {
-        this.matrika = matrika;
-    }
-
-    public Matrika (int x, int y) {
-        this.matrika = new int [x][y];
-    }
-
-    public boolean setVrednost(int i, int j, int vrednost) {
-        matrika[i][j] = vrednost;
-        return true;
-    }
-
-    public int getVrednost(int i, int j) {
-        return matrika[i][j];
-    }
-
-    public int [][] getTabela () {
-        return matrika;
-    }
-
-    public boolean setTabela (int [][] tabela) {
-        this.matrika = tabela;
-        return true;
     }
 }
