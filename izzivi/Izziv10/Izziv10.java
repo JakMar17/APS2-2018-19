@@ -50,7 +50,7 @@ public class Izziv10 {
     private static void izpisTabela (int [][] tabela) {
         for (int i = 0; i < stJajc +1; i++) {
             if (i == 0)
-                System.out.format("    ");
+                System.out.format("     ");
             else
                 System.out.format("%3d ", i);
         }
