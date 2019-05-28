@@ -1,13 +1,29 @@
 import java.util.*;
 
 public class Naloga3 {
-    private static Network graf;
+    private static Graf graf;
     private static Scanner sc = new Scanner(System.in);
     private static String algoritem;
     private static int dolzinaIzpisa = -1;
     private static int stPovezav, stVozlisc;
     public static void main(String [] args) {
-        
+        branjePodatkov();
+        /*System.out.println(algoritem);
+        System.out.println(dolzinaIzpisa);
+        izpisGrafa();*/
+
+        switch(algoritem) {
+            case "2c":
+                break;
+            case "gr":
+                break;
+            case "ex":
+                break;
+            case "bt":
+                break;
+            case "dp":
+                break;
+        }
     }
 
     private static void branjePodatkov() {
@@ -18,44 +34,36 @@ public class Naloga3 {
         stVozlisc = sc.nextInt();
         stPovezav = sc.nextInt();
         
-        
+        graf = new Graf(stVozlisc, stPovezav);
+        for (int i = 0; i < stPovezav; i++)
+            graf.dodajPovezavo(sc.nextInt(), sc.nextInt());
+    }
+
+    private static void izpisGrafa () {
+        Vozlisce [] vozlisce = graf.getVozlisca();
+        for (int i = 0; i < stVozlisc; i++) {
+            Vozlisce v = vozlisce[i];
+            ArrayList<Povezava> povezave = v.getPovezave();
+            for (int j = 0; j < povezave.size(); j++)
+                System.out.format("%d - %d%n", povezave.get(j).getP1(), povezave.get(j).getP2());
+            System.out.println();
+        }
     }
 }
 
+class Dvobarvanje {
+    private Graf g;
+    private int stVozlisc;
 
-class Node {
-    int id;
-    // marks for the algorithm
-    // ------------------------------------
-    boolean marked = false;
-    Edge augmEdge = null; // the edge over which we brought the flow increase
-    int incFlow = -1; // -1 means a potentially infinite flow
-    // ------------------------------------
-    ArrayList<Edge> inEdges;
-    ArrayList<Edge> outEdges;
-
-    public Node(int i) {
-        id = i;
-        inEdges = new ArrayList<Edge>();
-        outEdges = new ArrayList<Edge>();
+    public Dvobarvanje (int stVozlisc, Graf g) {
+        this.stVozlisc = stVozlisc;
+        this.g = g;
     }
 }
 
-class Edge {
-    int startID;
-    int endID;
-    int capacity;
-    int currFlow;
+//podporni razredi za grafe
 
-    public Edge(int fromNode, int toNode, int capacity2) {
-        startID = fromNode;
-        endID = toNode;
-        capacity = capacity2;
-        currFlow = 0;
-    }
-}
-
-/*class Graf {
+class Graf {
     private Vozlisce [] vozlisca;
     private int stVozlisc, stPovezav;
 
@@ -67,57 +75,75 @@ class Edge {
             vozlisca[i] = new Vozlisce(i);
     }
 
-    public Vozlisce getVozlisca() {
+    public Vozlisce[] getVozlisca() {
         return vozlisca;
     }
 
     public boolean dodajPovezavo (int tocka1, int tocka2) {
-        Povezava p1 = new Povezava(tocka1, tocka2);
-        Povezava p2 = new Povezava(tocka2, tocka1);
-        vozlisca[tocka1].izhod.dodaj(p1);
-        vozlisca[tocka2].vhod.dodaj(p1);
-        
-        vozlisca[tocka2].izhod.dodaj(p2);
-        vozlisca[tocka1].vhod.dodaj(p2);
+        Povezava p = new Povezava(tocka1, tocka2);
+        vozlisca[tocka1].dodajPovezavo(p);
+        vozlisca[tocka2].dodajPovezavo(p);
+
+        return true;
     }
-}*/
+}
 
-class Network {
-    Node[] nodes;
+class Vozlisce {
+    private int id;
+    private int barva = -1;
 
-    /**
-     * Create a new network with n nodes (0..n-1).
-     * 
-     * @param n the size of the network.
-     */
-    public Network(int n) {
-        nodes = new Node[n];
-        for (int i = 0; i < nodes.length; i++) {
-            nodes[i] = new Node(i);
-        }
+    private ArrayList<Povezava> povezave;
+
+    public Vozlisce (int id) {
+        this.id = id;
+        povezave = new ArrayList<Povezava>();
     }
 
-    /**
-     * Add a connection to the network, with all the corresponding in and out edges.
-     * 
-     * @param fromNode
-     * @param toNode
-     * @param capacity
-     */
-    public void addConnection(int fromNode, int toNode, int capacity) {
-        Edge e = new Edge(fromNode, toNode, capacity);
-        nodes[fromNode].outEdges.add(e);
-        nodes[toNode].inEdges.add(e);
+    public int getId () {
+        return id;
     }
 
-    /**
-     * Reset all the marks of the algorithm, before the start of a new iteration.
-     */
-    public void resetMarks() {
-        for (int i = 0; i < nodes.length; i++) {
-            nodes[i].marked = false;
-            nodes[i].augmEdge = null;
-            nodes[i].incFlow = -1;
-        }
+    public int getBarva() {
+        return barva;
+    }
+
+    public ArrayList<Povezava> getPovezave () {
+        return povezave;
+    }
+
+
+    public void dodajBarvo (int barva) {
+        this.barva = barva;
+    }
+
+    public void dodajPovezavo (Povezava p) {
+        povezave.add(p);
+    }
+
+}
+
+class Povezava {
+    private int p1;
+    private int p2;
+
+    public Povezava (int p1, int p2) {
+        this.p1 = p1;
+        this.p2 = p2;
+    }
+
+    public int getP1 () {
+        return p1;
+    }
+
+    public int getP2() {
+        return p2;
+    }
+
+    public void setP1 (int p1) {
+        this.p1 = p1;
+    }
+
+    public void setP2 (int p2) {
+        this.p2 = p2;
     }
 }
