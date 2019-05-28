@@ -14,7 +14,7 @@ public class Naloga3 {
 
         switch(algoritem) {
             case "2c":
-                Dvobarvanje db = new Dvobarvanje(stVozlisc, graf);
+                Dvobarvanje db = new Dvobarvanje(stVozlisc, graf, dolzinaIzpisa);
                 //db.jeDvobarven();
                 break;
             case "gr":
@@ -51,54 +51,38 @@ public class Naloga3 {
             System.out.println();
         }
     }
-
-    /*protected static boolean izpisNarascajoce(ArrayList<Povezava> array, int nivo, int mojId) {
-        if (array == null)
-            return false;
-
-        System.out.format("%d:", nivo);
-        for (int i = 0; i < array.size(); i++) {
-            int min = Integer.MAX_VALUE;
-            int indeks = -1;
-            for (int j = 0; j < array.size(); j++) {
-                if (array.get(j).njegovId(mojId) < min && array.get(j) != null) {
-                    indeks = j;
-                    min = array.get(j);
-                }
-            }
-            System.out.format(" %d", min);
-            if (indeks != -1)
-                array.set(indeks, null);
-        }
-        System.out.println();
-        return true;
-    }*/
 }
 
 class Dvobarvanje extends Naloga3{
     private Graf g;
     private Vozlisce [] vozlisca;
     private int stVozlisc;
+    private Pisanje p;
 
-    public Dvobarvanje (int stVozlisc, Graf g) {
+    public Dvobarvanje (int stVozlisc, Graf g, int dolzinaIzpisa) {
         super();
+        p = new Pisanje(dolzinaIzpisa);
         this.stVozlisc = stVozlisc;
         this.g = g;
         vozlisca = g.getVozlisca();
         Vozlisce prvo = vozlisca[0];
         prvo.setObdelan(true);
         prvo.dodajBarvo(0);
-        System.out.format("0 : 0%n");
+        p.dodajVrstico(String.format("0 : 0%n"));
+        //System.out.format("0 : 0%n");
         imaPogoj(prvo);
         jeDvobarven(prvo);
+        p.izpisZadnjih();
     }
 
     private boolean izpisNarascajoce (ArrayList<Vozlisce> original, int nivo) {
+        String vrstica = "";
         ArrayList<Vozlisce> list = new ArrayList<>();
         list.addAll(original);
         if (list.size() == 0)
             return false;
-        System.out.format("%d :", nivo);
+        vrstica += String.format("%d :", nivo);
+        //System.out.format("%d :", nivo);
         for (int i = 0; i < list.size(); i++) {
             int min = Integer.MAX_VALUE;
             int indeks = -1;
@@ -108,10 +92,13 @@ class Dvobarvanje extends Naloga3{
                     indeks = j;
                 }
             }
-            System.out.print(" " + min);
+            vrstica += String.format(" " + min);
+            //System.out.print(" " + min);
             list.set(indeks, null);
         }
-        System.out.println();
+        vrstica += String.format("%n");
+        p.dodajVrstico(vrstica);
+        //System.out.println();
         return true;
     }
 
@@ -142,7 +129,8 @@ class Dvobarvanje extends Naloga3{
         for (int i = 0; ; i++) {
             ArrayList<Vozlisce> list = dobiNivo(prvo, i);
             if (list.size() == 0) {
-                System.out.format("OK");
+                p.dodajVrstico(String.format("OK"));
+                //System.out.format("OK");
                 return true;
             }
             //izpisNarascajoce(list, i+1);
@@ -152,7 +140,8 @@ class Dvobarvanje extends Naloga3{
                 boolean pogoj = imaPogoj(list.get(j));
                 if(!pogoj) {
                     //System.out.println(list.get(j).getId());
-                    System.out.format("NOK");
+                    p.dodajVrstico(String.format("NOK"));
+                    //System.out.format("NOK");
                     return false;
                 }
             }
@@ -182,6 +171,8 @@ class Dvobarvanje extends Naloga3{
             return 0;
     }
 }
+
+
 
 //podporni razredi za grafe
 
@@ -283,5 +274,32 @@ class Povezava {
             return p2;
         else
             return p1;
+    }
+}
+
+class Pisanje {
+    private ArrayList<String> vrstice = new ArrayList<>();
+    private int stVrstic = -1;
+
+    public Pisanje(){}
+    public Pisanje(int stVrstic){this.stVrstic = stVrstic;}
+
+    public void dodajVrstico (String vrstica) {
+        vrstice.add(vrstica);
+    }
+
+    public void izpisZadnjih () {
+        //System.out.println(stVrstic);
+        if (stVrstic == -1) {
+            izpis();
+            return;
+        }
+        for (int i = (vrstice.size() - stVrstic); i < vrstice.size(); i++)
+            System.out.print(vrstice.get(i));
+    }
+
+    public void izpis () {
+        for (int i = 0; i < vrstice.size(); i++)
+            System.out.print(vrstice.get(i));
     }
 }
