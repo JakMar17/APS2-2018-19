@@ -1,3 +1,5 @@
+//@author JakMar17
+
 import java.util.*;
 
 public class Naloga3 {
