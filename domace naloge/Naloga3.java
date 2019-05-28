@@ -18,6 +18,7 @@ public class Naloga3 {
                 //db.jeDvobarven();
                 break;
             case "gr":
+                PozresnoBarvanje gr = new PozresnoBarvanje(stVozlisc, graf, dolzinaIzpisa);
                 break;
             case "ex":
                 break;
@@ -172,6 +173,45 @@ class Dvobarvanje extends Naloga3{
     }
 }
 
+class PozresnoBarvanje extends Naloga3 {
+    private Graf g;
+    private Vozlisce[] vozlisca;
+    private int stVozlisc;
+    private Pisanje p;
+
+    public PozresnoBarvanje (int stVozlisc, Graf g, int dolzinaIzpisa) {
+        this.stVozlisc = stVozlisc;
+        this.g = g;
+        p = new Pisanje(dolzinaIzpisa);
+        
+        vozlisca = g.getVozlisca();
+        pobarvaj();
+        p.izpisZadnjih();
+    }
+
+    private void pobarvaj () {
+        for (int i = 0; i < stVozlisc; i++) {
+            Vozlisce v = vozlisca[i];
+            v.dodajBarvo(barvaVozlisca(v));
+            p.dodajVrstico(String.format("%d : %d%n", v.getId(), v.getBarva()));
+        }
+    }
+
+    private int barvaVozlisca (Vozlisce v) {
+        ArrayList<Vozlisce> sosedje = g.sosedje(v);
+        
+        for (int kandidat = 0; ; kandidat++) {
+            boolean pogoj = true;
+            for (int i = 0; i < sosedje.size(); i++) {
+                if (sosedje.get(i).getBarva() == kandidat)
+                    pogoj = false;
+            }
+            if (pogoj)
+                return kandidat;
+        }
+    }
+
+}
 
 
 //podporni razredi za grafe
@@ -199,6 +239,15 @@ class Graf {
 
         return true;
     }
+
+    public ArrayList<Vozlisce> sosedje(Vozlisce v) {
+        ArrayList<Vozlisce> sosedi = new ArrayList<>();
+        ArrayList<Povezava> povezave = v.getPovezave();
+        for (int i = 0; i < povezave.size(); i++)
+            sosedi.add(vozlisca[povezave.get(i).njegovId(v.getId())]);
+        return sosedi;
+    }
+
 }
 
 class Vozlisce {
