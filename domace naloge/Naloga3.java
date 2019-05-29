@@ -352,3 +352,39 @@ class Pisanje {
             System.out.print(vrstice.get(i));
     }
 }
+
+class Sestevalnik {
+    private int baza;
+    private int stVozlisc;
+    private int[] tabela;
+
+    public Sestevalnik(int baza, int stVozlisc) {
+        this.baza = baza;
+        this.stVozlisc = stVozlisc;
+        tabela = new int[stVozlisc];
+    }
+
+    public int[] pristejEna() {
+        tabela[stVozlisc - 1]++;
+        int tmp = 0;
+        for (int i = stVozlisc - 1; i >= 0; i--) {
+            tabela[i] += tmp;
+            tmp = 0;
+            if (tabela[i] >= baza) {
+                tmp = 1;
+                tabela[i] %= baza;
+            }
+        }
+        return tabela;
+    }
+
+    public int[] getTabela() {
+        return tabela;
+    }
+
+    public void izpisTabela() {
+        for (int i = 0; i < tabela.length; i++)
+            System.out.format("%d ", tabela[i]);
+        System.out.println();
+    }
+}
