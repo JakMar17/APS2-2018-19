@@ -24,6 +24,7 @@ public class Naloga3 {
                 IzcrpnoPreiskovanje ex = new IzcrpnoPreiskovanje(stVozlisc, graf, dolzinaIzpisa);
                 break;
             case "bt":
+                Sestopanje bt = new Sestopanje(stVozlisc, graf, dolzinaIzpisa);
                 break;
             case "dp":
                 break;
@@ -270,6 +271,75 @@ class IzcrpnoPreiskovanje extends Naloga3 {
     }
 }
 
+class Sestopanje extends Naloga3 {
+    private Graf g;
+    private Vozlisce [] vozlisca;
+    private int stVozlisc;
+    private Pisanje p;
+    private Sestevalnik s;
+
+    public Sestopanje (int stVozlisc, Graf g, int dolzinaIzpisa) {
+        this.stVozlisc = stVozlisc;
+        this.g = g;
+        p = new Pisanje(dolzinaIzpisa);
+        s = new Sestevalnik(2, stVozlisc);
+
+        vozlisca = g.getVozlisca();
+        iskanje();
+        p.izpisZadnjih();
+    }
+
+    public boolean iskanje() {
+        povecajBarvo:
+        for (int k = 2; ;k++) {
+            s.setBaza(k);
+            p.dodajVrstico(String.format("k = %d%n", k));
+            s.resetirajTabelo();
+            nadaljuj:
+            for (int i = 0; i < stVozlisc; i++) {
+                for (int j = 0; j < k; j++) {
+                    String x = s.toStringMest(i);
+                    if(veljavnoBarvanje(s.getTabela(), i)) {
+                        x += String.format("OK%n");
+                        p.dodajVrstico(x);
+                        if (i+1 == stVozlisc)
+                            return true;
+                        else
+                            continue nadaljuj;
+                    } else {
+                        x += String.format("NOK%n");
+                        p.dodajVrstico(x);
+                        if(j+1 == k)
+                            continue povecajBarvo;
+                    }
+                    s.pristejMesto(i);
+                }
+            }
+        }
+    }
+
+    private boolean veljavnoBarvanje (int [] tabelaBarv, int stAktivnih) {
+        for (int i = 0; i < stAktivnih; i++)
+            if(!imaPogoj(vozlisca[i], tabelaBarv, stAktivnih))
+                return false;
+        return true;
+    }
+
+    private boolean imaPogoj (Vozlisce v, int[] tabelaBarv, int stAktivnih) {
+        ArrayList<Vozlisce> sosedi = g.sosedje(v);
+        int mojaBarva = tabelaBarv[v.getId()];
+        for (int i = 0; i < sosedi.size(); i++) {
+            int njegovId = sosedi.get(i).getId();
+            if(njegovId > stAktivnih)
+                continue;
+            int njegovaBarva = tabelaBarv[njegovId];
+            if (njegovaBarva == mojaBarva)
+                return false;
+        }
+        return true;
+    }
+}
+
 //podporni razredi za grafe
 
 class Graf {
@@ -395,7 +465,7 @@ class Pisanje {
 
     public void izpisZadnjih () {
         //System.out.println(stVrstic);
-        if (stVrstic == -1) {
+        if (stVrstic == -1 || stVrstic >= vrstice.size()) {
             izpis();
             return;
         }
@@ -434,6 +504,24 @@ class Sestevalnik {
         return tabela;
     }
 
+    public int[] pristejMesto (int mesto) {
+        tabela[mesto]++;
+        int tmp = 0;
+        for (int i = mesto; i >= 0; i--) {
+            tabela[i] += tmp;
+            tmp = 0;
+            if (tabela[i] >= baza) {
+                tmp = 1;
+                tabela[i] %= baza;
+            }
+        }
+        return tabela;
+    }
+
+    public void resetirajTabelo () {
+        tabela = new int [stVozlisc];
+    }
+
     public int[] getTabela() {
         return tabela;
     }
@@ -447,6 +535,13 @@ class Sestevalnik {
     public String toString () {
         String x = "";
         for (int i = 0; i < tabela.length; i++) 
+            x += String.format("%d ", tabela[i]);
+        return x;
+    }
+
+    public String toStringMest (int mest) {
+        String x = "";
+        for (int i = 0; i <= mest; i++)
             x += String.format("%d ", tabela[i]);
         return x;
     }
